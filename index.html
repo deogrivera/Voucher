@@ -143,15 +143,6 @@
             background: #c82333;
         }
 
-        .btn-warning {
-            background: #ffc107;
-            color: #333;
-        }
-
-        .btn-warning:hover {
-            background: #e0a800;
-        }
-
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -231,7 +222,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Debug info */
         .debug-info {
             font-size: 12px;
             color: #666;
@@ -241,7 +231,10 @@
             border-radius: 4px;
             border: 1px solid #dee2e6;
             font-family: monospace;
-            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
         @media (max-width: 768px) {
@@ -377,24 +370,23 @@
         // ============================================
         // CONFIGURATION - UPDATE WITH YOUR WEB APP URL
         // ============================================
-        // IMPORTANT: After re-deploying your Apps Script, copy the NEW URL here
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfm2LjNN4HAsiMKx70YlusrajC8xqZQzYTlH-JhnQQyQ-JNiafIFxuMbahiuYLud3sOA/exec';
         
         let itemCount = 0;
         let isSubmitting = false;
 
-        // Show debug info
         function showDebug(message) {
             const debugEl = document.getElementById('debugInfo');
             debugEl.style.display = 'block';
-            debugEl.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '\n';
+            const timestamp = new Date().toLocaleTimeString();
+            debugEl.textContent += timestamp + ': ' + message + '\n';
+            debugEl.scrollTop = debugEl.scrollHeight;
             console.log(message);
         }
 
         // Set today's date as default
         document.getElementById('prDate').value = new Date().toISOString().split('T')[0];
 
-        // Generate PR number
         function generatePRNumber() {
             const date = new Date();
             const year = date.getFullYear();
@@ -406,7 +398,6 @@
 
         document.getElementById('prNumber').value = generatePRNumber();
 
-        // Add item row
         function addItem(stockNo = '', unit = '', description = '', quantity = 1, unitCost = 0) {
             const container = document.getElementById('itemContainer');
             const row = document.createElement('div');
@@ -459,8 +450,8 @@
                 document.getElementById('totalCostDisplay').textContent = '0.00';
                 document.getElementById('statusMessage').className = 'status-message';
                 document.getElementById('statusMessage').style.display = 'none';
+                document.getElementById('debugInfo').textContent = '';
                 document.getElementById('debugInfo').style.display = 'none';
-                document.getElementById('debugInfo').innerHTML = '';
                 addItem('', '', '', 1, 0);
                 addItem('', '', '', 1, 0);
                 const submitBtn = document.getElementById('submitBtn');
@@ -481,6 +472,8 @@
         async function submitPR() {
             if (isSubmitting) return;
             
+            // Clear previous debug
+            document.getElementById('debugInfo').textContent = '';
             showDebug('=== Starting submission ===');
             showDebug('Script URL: ' + SCRIPT_URL);
             
@@ -548,7 +541,7 @@
                 timestamp: new Date().toISOString()
             };
 
-            showDebug('📦 Data prepared: ' + JSON.stringify(formData, null, 2));
+            showDebug('📦 Data prepared. PR: ' + formData.prNumber + ', Items: ' + formData.items.length);
 
             // Disable submit button
             isSubmitting = true;
@@ -559,9 +552,6 @@
             showDebug('⏳ Sending request...');
 
             try {
-                // Use a proxy or test the connection first
-                showDebug('🌐 Testing connection to script...');
-                
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     headers: {
@@ -573,30 +563,26 @@
                 showDebug('📡 Response status: ' + response.status);
                 
                 const result = await response.json();
-                showDebug('📨 Response data: ' + JSON.stringify(result, null, 2));
+                showDebug('📨 Response: ' + JSON.stringify(result, null, 2));
 
                 if (result.success) {
                     showStatus('✅ Purchase Request successfully saved! PR Number: ' + result.prNumber, 'success');
                     showDebug('✅ Success! PR saved: ' + result.prNumber);
                     
-                    // Ask to view
                     setTimeout(() => {
-                        if (confirm('Purchase Request saved successfully!\n\nPR Number: ' + result.prNumber + '\n\nWould you like to view the completed PR form?')) {
-                            window.open('pr-report.html?pr=' + encodeURIComponent(result.prNumber), '_blank');
-                        }
-                        if (confirm('Do you want to start a new Purchase Request?')) {
+                        if (confirm('Purchase Request saved successfully!\n\nPR Number: ' + result.prNumber + '\n\nWould you like to start a new one?')) {
                             resetForm();
                         }
                     }, 500);
                 } else {
                     showStatus('❌ Error: ' + (result.error || 'Unknown error'), 'error');
-                    showDebug('❌ Server returned error: ' + JSON.stringify(result));
+                    showDebug('❌ Server error: ' + JSON.stringify(result));
                 }
 
             } catch (error) {
                 showStatus('❌ Error saving PR: ' + error.message, 'error');
                 showDebug('❌ Fetch error: ' + error.message);
-                showDebug('Stack: ' + error.stack);
+                showDebug('Stack: ' + (error.stack || 'No stack trace'));
                 console.error('Full error:', error);
             }
 
@@ -607,25 +593,11 @@
             showDebug('=== Submission completed ===');
         }
 
-        // Test connection on page load
-        async function testConnection() {
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'GET'
-                });
-                const result = await response.json();
-                showDebug('🔗 Connection test: ' + JSON.stringify(result));
-            } catch (e) {
-                showDebug('⚠️ Connection test failed: ' + e.message);
-            }
-        }
-
         // Initialize
         addItem('', '', '', 1, 0);
         addItem('', '', '', 1, 0);
         
-        // Test connection after page loads
-        setTimeout(testConnection, 1000);
+        showDebug('🔧 System ready. Form loaded.');
     </script>
 </body>
 </html>
