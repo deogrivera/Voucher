@@ -231,6 +231,19 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Debug info */
+        .debug-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            font-family: monospace;
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .form-group label {
                 width: 100%;
@@ -356,23 +369,32 @@
             </div>
 
             <div id="statusMessage" class="status-message"></div>
+            <div id="debugInfo" class="debug-info"></div>
         </form>
     </div>
 
     <script>
         // ============================================
-        // CONFIGURATION - UPDATE YOUR WEB APP URL HERE
+        // CONFIGURATION - UPDATE WITH YOUR WEB APP URL
         // ============================================
+        // IMPORTANT: After re-deploying your Apps Script, copy the NEW URL here
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfm2LjNN4HAsiMKx70YlusrajC8xqZQzYTlH-JhnQQyQ-JNiafIFxuMbahiuYLud3sOA/exec';
         
-        // Initialize with 2 empty item rows
         let itemCount = 0;
         let isSubmitting = false;
+
+        // Show debug info
+        function showDebug(message) {
+            const debugEl = document.getElementById('debugInfo');
+            debugEl.style.display = 'block';
+            debugEl.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '\n';
+            console.log(message);
+        }
 
         // Set today's date as default
         document.getElementById('prDate').value = new Date().toISOString().split('T')[0];
 
-        // Generate PR number (you can customize this format)
+        // Generate PR number
         function generatePRNumber() {
             const date = new Date();
             const year = date.getFullYear();
@@ -382,7 +404,6 @@
             return `PR-${year}${month}${day}-${random}`;
         }
 
-        // Set PR number on page load
         document.getElementById('prNumber').value = generatePRNumber();
 
         // Add item row
@@ -406,7 +427,6 @@
             updateTotal();
         }
 
-        // Remove item row
         function removeItem(btn) {
             const row = btn.parentElement;
             if (document.querySelectorAll('.item-row').length > 1) {
@@ -417,7 +437,6 @@
             }
         }
 
-        // Update total cost
         function updateTotal() {
             const rows = document.querySelectorAll('.item-row');
             let total = 0;
@@ -431,7 +450,6 @@
             document.getElementById('totalCostDisplay').textContent = total.toFixed(2);
         }
 
-        // Reset form
         function resetForm() {
             if (confirm('Are you sure you want to reset the form? All data will be lost.')) {
                 document.getElementById('prForm').reset();
@@ -441,10 +459,10 @@
                 document.getElementById('totalCostDisplay').textContent = '0.00';
                 document.getElementById('statusMessage').className = 'status-message';
                 document.getElementById('statusMessage').style.display = 'none';
-                // Add default items
+                document.getElementById('debugInfo').style.display = 'none';
+                document.getElementById('debugInfo').innerHTML = '';
                 addItem('', '', '', 1, 0);
                 addItem('', '', '', 1, 0);
-                // Reset submit button
                 const submitBtn = document.getElementById('submitBtn');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '💾 Save Purchase Request';
@@ -452,7 +470,6 @@
             }
         }
 
-        // Show status messages
         function showStatus(message, type) {
             const statusDiv = document.getElementById('statusMessage');
             statusDiv.textContent = message;
@@ -461,10 +478,11 @@
             statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        // Submit PR to Google Sheets
         async function submitPR() {
-            // Prevent double submission
             if (isSubmitting) return;
+            
+            showDebug('=== Starting submission ===');
+            showDebug('Script URL: ' + SCRIPT_URL);
             
             // Validate required fields
             const required = ['entityName', 'officeSection', 'fundCluster', 'prDate', 'purpose', 'requesterName', 'requesterDesignation', 'approverName', 'approverDesignation'];
@@ -473,12 +491,14 @@
                 const field = document.getElementById(id);
                 if (!field.value.trim()) {
                     showStatus(`Please fill in: ${field.previousElementSibling.textContent.trim()}`, 'error');
+                    showDebug('❌ Validation failed: ' + field.previousElementSibling.textContent.trim());
                     field.focus();
                     return;
                 }
             }
+            showDebug('✅ Required fields validated');
 
-            // Validate at least one item with description
+            // Validate items
             const itemRows = document.querySelectorAll('.item-row');
             let hasValidItem = false;
             let itemData = [];
@@ -503,10 +523,12 @@
 
             if (!hasValidItem) {
                 showStatus('Please add at least one valid item with description, quantity, and unit cost.', 'error');
+                showDebug('❌ No valid items found');
                 return;
             }
+            showDebug('✅ Items validated: ' + itemData.length + ' items');
 
-            // Prepare data for Google Sheets
+            // Prepare data
             const formData = {
                 prNumber: document.getElementById('prNumber').value,
                 entityName: document.getElementById('entityName').value.trim(),
@@ -526,60 +548,84 @@
                 timestamp: new Date().toISOString()
             };
 
-            // Disable submit button and show loading state
+            showDebug('📦 Data prepared: ' + JSON.stringify(formData, null, 2));
+
+            // Disable submit button
             isSubmitting = true;
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner"></span> Saving...';
             showStatus('Saving your Purchase Request...', 'loading');
+            showDebug('⏳ Sending request...');
 
-            // Send to Google Apps Script
             try {
+                // Use a proxy or test the connection first
+                showDebug('🌐 Testing connection to script...');
+                
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(formData)
                 });
 
-                // Note: With 'no-cors' mode, we can't read the response
-                // So we assume success if no error was thrown
-                showStatus('✅ Purchase Request successfully saved! PR Number: ' + formData.prNumber, 'success');
+                showDebug('📡 Response status: ' + response.status);
                 
-                // Reset submit button
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '💾 Save Purchase Request';
-                isSubmitting = false;
-                
-                // Ask to view or start new PR
-                setTimeout(() => {
-                    if (confirm('Purchase Request saved successfully!\n\nPR Number: ' + formData.prNumber + '\n\nWould you like to view the completed PR form?')) {
-                        // Open the report page
-                        const reportUrl = 'pr-report.html?pr=' + encodeURIComponent(formData.prNumber);
-                        window.open(reportUrl, '_blank');
-                    }
+                const result = await response.json();
+                showDebug('📨 Response data: ' + JSON.stringify(result, null, 2));
+
+                if (result.success) {
+                    showStatus('✅ Purchase Request successfully saved! PR Number: ' + result.prNumber, 'success');
+                    showDebug('✅ Success! PR saved: ' + result.prNumber);
                     
-                    if (confirm('Do you want to start a new Purchase Request?')) {
-                        resetForm();
-                    }
-                }, 500);
+                    // Ask to view
+                    setTimeout(() => {
+                        if (confirm('Purchase Request saved successfully!\n\nPR Number: ' + result.prNumber + '\n\nWould you like to view the completed PR form?')) {
+                            window.open('pr-report.html?pr=' + encodeURIComponent(result.prNumber), '_blank');
+                        }
+                        if (confirm('Do you want to start a new Purchase Request?')) {
+                            resetForm();
+                        }
+                    }, 500);
+                } else {
+                    showStatus('❌ Error: ' + (result.error || 'Unknown error'), 'error');
+                    showDebug('❌ Server returned error: ' + JSON.stringify(result));
+                }
 
             } catch (error) {
-                console.error('Error submitting PR:', error);
-                showStatus('❌ Error saving PR. Please check your connection and try again.', 'error');
-                
-                // Reset submit button
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '💾 Save Purchase Request';
-                isSubmitting = false;
+                showStatus('❌ Error saving PR: ' + error.message, 'error');
+                showDebug('❌ Fetch error: ' + error.message);
+                showDebug('Stack: ' + error.stack);
+                console.error('Full error:', error);
+            }
+
+            // Reset submit button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '💾 Save Purchase Request';
+            isSubmitting = false;
+            showDebug('=== Submission completed ===');
+        }
+
+        // Test connection on page load
+        async function testConnection() {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'GET'
+                });
+                const result = await response.json();
+                showDebug('🔗 Connection test: ' + JSON.stringify(result));
+            } catch (e) {
+                showDebug('⚠️ Connection test failed: ' + e.message);
             }
         }
 
-        // Add initial rows on page load
+        // Initialize
         addItem('', '', '', 1, 0);
         addItem('', '', '', 1, 0);
+        
+        // Test connection after page loads
+        setTimeout(testConnection, 1000);
     </script>
 </body>
 </html>
