@@ -10,7 +10,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f4f8;
@@ -18,7 +18,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
             background: white;
             padding: 30px;
@@ -30,9 +30,42 @@
             color: #1a3c6e;
             border-bottom: 3px solid #1a3c6e;
             padding-bottom: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             text-align: center;
         }
+
+        /* ---------- TABS ---------- */
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #dde1e6;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 10px;
+            background: #f0f4f8;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            color: #6c757d;
+            border-radius: 6px 6px 0 0;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover { background: #e9ecef; }
+
+        .tab-btn.active {
+            background: #1a3c6e;
+            color: white;
+            border-bottom-color: #d97706;
+        }
+
+        .tab-view { display: none; }
+        .tab-view.active { display: block; }
 
         .form-section {
             border: 1px solid #dde1e6;
@@ -48,6 +81,15 @@
             font-size: 16px;
             border-left: 4px solid #1a3c6e;
             padding-left: 10px;
+        }
+
+        .form-section.supplier-block {
+            background: #fff;
+            border: 1px solid #c9d4e0;
+        }
+
+        .form-section.supplier-block h3 {
+            border-left-color: #d97706;
         }
 
         .form-group {
@@ -110,6 +152,39 @@
             color: #1a3c6e;
         }
 
+        /* Market survey item row: Item No / Qty / Unit / Description / P1 / P2 / P3 / Avg / Action */
+        .ms-item-row {
+            display: grid;
+            grid-template-columns: 70px 70px 80px 1fr 100px 100px 100px 100px 40px;
+            gap: 6px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .ms-item-row input {
+            padding: 6px 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 12px;
+            width: 100%;
+        }
+
+        .ms-item-row input.avg-price {
+            background: #eef6ee;
+            font-weight: 700;
+            color: #1a6e3c;
+        }
+
+        .ms-item-row .header {
+            font-weight: 700;
+            background: #e9ecef;
+            padding: 8px 4px;
+            text-align: center;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #1a3c6e;
+        }
+
         .btn {
             background: #1a3c6e;
             color: white;
@@ -128,7 +203,10 @@
         .btn-success:hover { background: #218838; }
         .btn-danger { background: #dc3545; }
         .btn-danger:hover { background: #c82333; }
+        .btn-accent { background: #d97706; }
+        .btn-accent:hover { background: #b85f04; }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-small { padding: 6px 12px; font-size: 12px; }
 
         .button-group {
             margin-top: 20px;
@@ -426,6 +504,82 @@
             vertical-align: middle;
         }
 
+        /* ---------- MS retrieval panel (inside PR tab) ---------- */
+        .ms-lookup {
+            background: #fff8ec;
+            border: 1px dashed #d97706;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .ms-lookup h4 {
+            color: #b85f04;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .ms-lookup-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .ms-lookup-row input {
+            flex: 1;
+            min-width: 180px;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .ms-browse-list {
+            margin-top: 10px;
+            border: 1px solid #eadfcb;
+            border-radius: 6px;
+            background: white;
+            max-height: 220px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .ms-browse-list.visible { display: block; }
+
+        .ms-browse-item {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f0ede3;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .ms-browse-item:last-child { border-bottom: none; }
+        .ms-browse-item:hover { background: #fff8ec; }
+
+        .ms-browse-item .ms-num {
+            font-weight: 700;
+            color: #1a3c6e;
+            font-family: monospace;
+        }
+
+        .ms-browse-item .ms-meta {
+            color: #6c757d;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .ms-load-status {
+            margin-top: 10px;
+            font-size: 13px;
+            padding: 8px 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .ms-load-status.success { display: block; background: #d4edda; color: #155724; }
+        .ms-load-status.error { display: block; background: #f8d7da; color: #721c24; }
+
         @media (max-width: 768px) {
             .form-group label {
                 width: 100%;
@@ -436,117 +590,247 @@
                 gap: 5px;
             }
             .item-row .header { display: none; }
+            .ms-item-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            .ms-item-row .header { display: none; }
             .container { padding: 15px; }
             .notification-box { padding: 25px; }
+            .tab-btn { font-size: 13px; padding: 12px 6px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📋 PURCHASE REQUEST FORM 1.1</h1>
-        
-        <form id="prForm">
-            <div class="form-section">
-                <h3>Entity Information</h3>
-                <div class="form-group">
-                    <label for="entityName">Entity Name:</label>
-                    <input type="text" id="entityName" placeholder="e.g., City Government of Manila" required>
-                </div>
-                <div class="form-group">
-                    <label for="officeSection">Office/Section:</label>
-                    <input type="text" id="officeSection" placeholder="e.g., Finance Department" required>
-                </div>
-                <div class="form-group">
-                    <label for="fundCluster">Fund Cluster:</label>
-                    <input type="text" id="fundCluster" placeholder="e.g., General Fund" required>
-                </div>
-                <div class="form-group">
-                    <label for="rcCode">Responsibility Center Code:</label>
-                    <input type="text" id="rcCode" placeholder="e.g., 101-001">
-                </div>
-            </div>
+        <h1>📋 PROCUREMENT SYSTEM</h1>
 
-            <div class="form-section">
-                <h3>Purchase Request Details</h3>
-                <div class="form-group">
-                    <label for="prNumber">PR No.:</label>
-                    <input type="text" id="prNumber" placeholder="Auto-generated" readonly style="background: #e9ecef;">
-                </div>
-                <div class="form-group">
-                    <label for="prDate">Date:</label>
-                    <input type="date" id="prDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="purpose">Purpose:</label>
-                    <textarea id="purpose" placeholder="State the purpose of this purchase..." required></textarea>
-                </div>
-            </div>
+        <div class="tab-nav">
+            <button type="button" class="tab-btn active" id="tabBtn-pr" onclick="switchTab('pr')">🧾 Purchase Request</button>
+            <button type="button" class="tab-btn" id="tabBtn-ms" onclick="switchTab('ms')">🔎 Market Survey</button>
+        </div>
 
-            <div class="form-section">
-                <h3>Items</h3>
-                <div class="items-section">
-                    <div class="item-row header">
-                        <span>Stock/Property No.</span>
-                        <span>Unit</span>
-                        <span>Item Description</span>
-                        <span>Quantity</span>
-                        <span>Unit Cost</span>
-                        <span>Action</span>
+        <!-- ================================================= -->
+        <!-- PURCHASE REQUEST TAB                               -->
+        <!-- ================================================= -->
+        <div id="view-pr" class="tab-view active">
+            <form id="prForm">
+
+                <div class="ms-lookup">
+                    <h4>🔎 Load items from a saved Market Survey (optional)</h4>
+                    <div class="ms-lookup-row">
+                        <input type="text" id="msSearchInput" placeholder="e.g., MS-20260826-1234">
+                        <button type="button" class="btn btn-accent btn-small" onclick="loadSurveyByNumber()">Load</button>
+                        <button type="button" class="btn btn-small" style="background:#6c757d;" onclick="toggleBrowseSurveys()">📂 Browse Recent</button>
                     </div>
-                    <div id="itemContainer"></div>
-                    <button type="button" class="btn btn-success" onclick="addItemRow()" style="margin-top:10px; font-size:13px; padding:8px 15px;">
-                        + Add Item
-                    </button>
-                    <div class="total-cost">
-                        Total Cost: ₱ <span id="totalCostDisplay">0.00</span>
+                    <div id="msBrowseList" class="ms-browse-list"></div>
+                    <div id="msLoadStatus" class="ms-load-status"></div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Entity Information</h3>
+                    <div class="form-group">
+                        <label for="entityName">Entity Name:</label>
+                        <input type="text" id="entityName" placeholder="e.g., City Government of Manila" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="officeSection">Office/Section:</label>
+                        <input type="text" id="officeSection" placeholder="e.g., Finance Department" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fundCluster">Fund Cluster:</label>
+                        <input type="text" id="fundCluster" placeholder="e.g., General Fund" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rcCode">Responsibility Center Code:</label>
+                        <input type="text" id="rcCode" placeholder="e.g., 101-001">
                     </div>
                 </div>
-            </div>
 
-            <div class="form-section">
-                <h3>Signatories</h3>
-                <div class="form-group">
-                    <label for="requesterSignature">Signature:</label>
-                    <input type="text" id="requesterSignature" placeholder="Sign name here">
+                <div class="form-section">
+                    <h3>Purchase Request Details</h3>
+                    <div class="form-group">
+                        <label for="prNumber">PR No.:</label>
+                        <input type="text" id="prNumber" placeholder="Auto-generated" readonly style="background: #e9ecef;">
+                    </div>
+                    <div class="form-group">
+                        <label for="msNumber">Market Survey No.:</label>
+                        <input type="text" id="msNumber" placeholder="Linked automatically when loaded above" readonly style="background: #e9ecef;">
+                    </div>
+                    <div class="form-group">
+                        <label for="prDate">Date:</label>
+                        <input type="date" id="prDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="purpose">Purpose:</label>
+                        <textarea id="purpose" placeholder="State the purpose of this purchase..." required></textarea>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="requesterName">Printed Name:</label>
-                    <input type="text" id="requesterName" required>
-                </div>
-                <div class="form-group">
-                    <label for="requesterDesignation">Designation:</label>
-                    <input type="text" id="requesterDesignation" required>
-                </div>
-                <hr style="margin: 15px 0;">
-                <div class="form-group">
-                    <label for="approverSignature">Signature:</label>
-                    <input type="text" id="approverSignature" placeholder="Sign name here">
-                </div>
-                <div class="form-group">
-                    <label for="approverName">Printed Name:</label>
-                    <input type="text" id="approverName" required>
-                </div>
-                <div class="form-group">
-                    <label for="approverDesignation">Designation:</label>
-                    <input type="text" id="approverDesignation" required>
-                </div>
-            </div>
 
-            <div class="button-group">
-                <button type="button" class="btn" id="submitBtn" onclick="submitPR()">💾 Save Purchase Request</button>
-                <button type="reset" class="btn btn-danger" onclick="resetForm()">🔄 Reset Form</button>
-            </div>
+                <div class="form-section">
+                    <h3>Items</h3>
+                    <div class="items-section">
+                        <div class="item-row header">
+                            <span>Stock/Property No.</span>
+                            <span>Unit</span>
+                            <span>Item Description</span>
+                            <span>Quantity</span>
+                            <span>Unit Cost</span>
+                            <span>Action</span>
+                        </div>
+                        <div id="itemContainer"></div>
+                        <button type="button" class="btn btn-success" onclick="addItemRow()" style="margin-top:10px; font-size:13px; padding:8px 15px;">
+                            + Add Item
+                        </button>
+                        <div class="total-cost">
+                            Total Cost: ₱ <span id="totalCostDisplay">0.00</span>
+                        </div>
+                    </div>
+                </div>
 
-            <div id="statusTracker" class="status-tracker">
-                <h4>
-                    ⏳ Processing Status
-                    <span id="statusBadge" class="badge">Starting...</span>
-                </h4>
-                <div id="progressSteps" class="progress-steps"></div>
-            </div>
+                <div class="form-section">
+                    <h3>Signatories</h3>
+                    <div class="form-group">
+                        <label for="requesterSignature">Signature:</label>
+                        <input type="text" id="requesterSignature" placeholder="Sign name here">
+                    </div>
+                    <div class="form-group">
+                        <label for="requesterName">Printed Name:</label>
+                        <input type="text" id="requesterName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="requesterDesignation">Designation:</label>
+                        <input type="text" id="requesterDesignation" required>
+                    </div>
+                    <hr style="margin: 15px 0;">
+                    <div class="form-group">
+                        <label for="approverSignature">Signature:</label>
+                        <input type="text" id="approverSignature" placeholder="Sign name here">
+                    </div>
+                    <div class="form-group">
+                        <label for="approverName">Printed Name:</label>
+                        <input type="text" id="approverName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="approverDesignation">Designation:</label>
+                        <input type="text" id="approverDesignation" required>
+                    </div>
+                </div>
 
-            <div id="statusMessage" class="status-message"></div>
-        </form>
+                <div class="button-group">
+                    <button type="button" class="btn" id="submitBtn" onclick="submitPR()">💾 Save Purchase Request</button>
+                    <button type="button" class="btn btn-danger" onclick="resetForm()">🔄 Reset Form</button>
+                </div>
+
+                <div id="statusTracker" class="status-tracker">
+                    <h4>
+                        ⏳ Processing Status
+                        <span id="statusBadge" class="badge">Starting...</span>
+                    </h4>
+                    <div id="progressSteps" class="progress-steps"></div>
+                </div>
+
+                <div id="statusMessage" class="status-message"></div>
+            </form>
+        </div>
+
+        <!-- ================================================= -->
+        <!-- MARKET SURVEY TAB                                  -->
+        <!-- ================================================= -->
+        <div id="view-ms" class="tab-view">
+            <form id="msForm">
+                <div class="form-section">
+                    <h3>Market Survey Details</h3>
+                    <div class="form-group">
+                        <label for="msFormNumber">MS No.:</label>
+                        <input type="text" id="msFormNumber" readonly style="background: #e9ecef;">
+                    </div>
+                    <div class="form-group">
+                        <label for="msDate">Date Accomplished:</label>
+                        <input type="date" id="msDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="msEndUser">End-User/Focal Person:</label>
+                        <input type="text" id="msEndUser" placeholder="e.g., GSS - Motorpool" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="msPurpose">Purpose/Requirement:</label>
+                        <textarea id="msPurpose" placeholder="What is being surveyed / procured..." required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Items &amp; Canvassed Prices (3 suppliers)</h3>
+                    <div class="items-section">
+                        <div class="ms-item-row header">
+                            <span>Item No.</span>
+                            <span>Qty</span>
+                            <span>Unit</span>
+                            <span>Item Description</span>
+                            <span>Supplier 1 ₱</span>
+                            <span>Supplier 2 ₱</span>
+                            <span>Supplier 3 ₱</span>
+                            <span>Average ₱</span>
+                            <span></span>
+                        </div>
+                        <div id="msItemContainer"></div>
+                        <button type="button" class="btn btn-success" onclick="addMSItemRow()" style="margin-top:10px; font-size:13px; padding:8px 15px;">
+                            + Add Item
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-section supplier-block">
+                    <h3>Supplier 1</h3>
+                    <div class="form-group"><label>Company Name:</label><input type="text" id="s1Name" required></div>
+                    <div class="form-group"><label>Business Address:</label><input type="text" id="s1Address"></div>
+                    <div class="form-group"><label>PhilGEPS Reg. No.:</label><input type="text" id="s1Philgeps"></div>
+                    <div class="form-group"><label>TIN:</label><input type="text" id="s1Tin"></div>
+                    <div class="form-group"><label>Telephone:</label><input type="text" id="s1Contact"></div>
+                    <div class="form-group"><label>Email:</label><input type="email" id="s1Email"></div>
+                    <div class="form-group"><label>Signatory Name:</label><input type="text" id="s1Signatory"></div>
+                    <div class="form-group"><label>Designation:</label><input type="text" id="s1Designation"></div>
+                </div>
+
+                <div class="form-section supplier-block">
+                    <h3>Supplier 2</h3>
+                    <div class="form-group"><label>Company Name:</label><input type="text" id="s2Name" required></div>
+                    <div class="form-group"><label>Business Address:</label><input type="text" id="s2Address"></div>
+                    <div class="form-group"><label>PhilGEPS Reg. No.:</label><input type="text" id="s2Philgeps"></div>
+                    <div class="form-group"><label>TIN:</label><input type="text" id="s2Tin"></div>
+                    <div class="form-group"><label>Telephone:</label><input type="text" id="s2Contact"></div>
+                    <div class="form-group"><label>Email:</label><input type="email" id="s2Email"></div>
+                    <div class="form-group"><label>Signatory Name:</label><input type="text" id="s2Signatory"></div>
+                    <div class="form-group"><label>Designation:</label><input type="text" id="s2Designation"></div>
+                </div>
+
+                <div class="form-section supplier-block">
+                    <h3>Supplier 3</h3>
+                    <div class="form-group"><label>Company Name:</label><input type="text" id="s3Name" required></div>
+                    <div class="form-group"><label>Business Address:</label><input type="text" id="s3Address"></div>
+                    <div class="form-group"><label>PhilGEPS Reg. No.:</label><input type="text" id="s3Philgeps"></div>
+                    <div class="form-group"><label>TIN:</label><input type="text" id="s3Tin"></div>
+                    <div class="form-group"><label>Telephone:</label><input type="text" id="s3Contact"></div>
+                    <div class="form-group"><label>Email:</label><input type="email" id="s3Email"></div>
+                    <div class="form-group"><label>Signatory Name:</label><input type="text" id="s3Signatory"></div>
+                    <div class="form-group"><label>Designation:</label><input type="text" id="s3Designation"></div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-accent" id="msSubmitBtn" onclick="submitMarketSurvey()">💾 Save Market Survey</button>
+                    <button type="button" class="btn btn-danger" onclick="resetMSForm()">🔄 Reset Form</button>
+                </div>
+
+                <div id="msStatusTracker" class="status-tracker">
+                    <h4>
+                        ⏳ Processing Status
+                        <span id="msStatusBadge" class="badge">Starting...</span>
+                    </h4>
+                    <div id="msProgressSteps" class="progress-steps"></div>
+                </div>
+
+                <div id="msStatusMessage" class="status-message"></div>
+            </form>
+        </div>
     </div>
 
     <div id="notificationOverlay" class="notification-overlay">
@@ -555,8 +839,8 @@
             <h2 id="notifTitle">Success!</h2>
             <p class="subtitle" id="notifSubtitle">Your Purchase Request has been saved.</p>
             <div class="pr-number" id="notifPRNumber">PR-2026-0825-1234</div>
-            <p style="font-size:13px; color:#6c757d; margin-top:5px;">Total Cost: <strong id="notifTotalCost">₱ 0.00</strong></p>
-            <div class="btn-group">
+            <p style="font-size:13px; color:#6c757d; margin-top:5px;" id="notifExtraLine">Total Cost: <strong id="notifTotalCost">₱ 0.00</strong></p>
+            <div class="btn-group" id="notifBtnGroup">
                 <button class="btn btn-success" onclick="closeNotification(); resetForm();">📝 New PR</button>
                 <button class="btn" onclick="closeNotification()">Close</button>
             </div>
@@ -568,13 +852,27 @@
         // CONFIGURATION - UPDATE WITH YOUR WEB APP URL
         // ============================================
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5qklyPCtOVdSgeSXHHwELpjVXinHIYjvCx8xf95AVy8NgwHS5xemEd9OzPzWnWCXvBA/exec';
-        
+
+        // ============================================
+        // TABS
+        // ============================================
+        function switchTab(tab) {
+            document.getElementById('view-pr').classList.toggle('active', tab === 'pr');
+            document.getElementById('view-ms').classList.toggle('active', tab === 'ms');
+            document.getElementById('tabBtn-pr').classList.toggle('active', tab === 'pr');
+            document.getElementById('tabBtn-ms').classList.toggle('active', tab === 'ms');
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // ============================================
+        // PR: STATUS TRACKER
+        // ============================================
         let itemCount = 0;
         let isSubmitting = false;
 
-        // ============================================
-        // STATUS TRACKER
-        // ============================================
         const STEPS = [
             { id: 'validate', label: 'Validating form data...', icon: '🔍' },
             { id: 'prepare', label: 'Preparing data for submission...', icon: '📦' },
@@ -681,11 +979,18 @@
         }
 
         // ============================================
-        // NOTIFICATION
+        // NOTIFICATION (shared by PR + MS)
         // ============================================
-        function showNotification(prNumber, totalCost) {
-            document.getElementById('notifPRNumber').textContent = prNumber;
-            document.getElementById('notifTotalCost').textContent = '₱ ' + totalCost.toFixed(2);
+        function showNotification(title, subtitle, refNumber, extraLineHtml, showNewPrBtn) {
+            document.getElementById('notifTitle').textContent = title;
+            document.getElementById('notifSubtitle').textContent = subtitle;
+            document.getElementById('notifPRNumber').textContent = refNumber;
+            document.getElementById('notifExtraLine').innerHTML = extraLineHtml || '';
+            document.getElementById('notifBtnGroup').innerHTML = showNewPrBtn
+                ? `<button class="btn btn-success" onclick="closeNotification(); resetForm();">📝 New PR</button>
+                   <button class="btn" onclick="closeNotification()">Close</button>`
+                : `<button class="btn btn-accent" onclick="closeNotification(); resetMSForm();">🔎 New Market Survey</button>
+                   <button class="btn" onclick="closeNotification()">Close</button>`;
             document.getElementById('notificationOverlay').classList.add('visible');
         }
 
@@ -694,7 +999,7 @@
         }
 
         // ============================================
-        // FORM FUNCTIONS
+        // PR: FORM FUNCTIONS
         // ============================================
         document.getElementById('prDate').value = new Date().toISOString().split('T')[0];
 
@@ -709,7 +1014,6 @@
 
         document.getElementById('prNumber').value = generatePRNumber();
 
-        // FIXED: Get all item rows safely
         function getItemRows() {
             return document.querySelectorAll('#itemContainer .item-row');
         }
@@ -719,7 +1023,7 @@
             const row = document.createElement('div');
             row.className = 'item-row';
             row.dataset.index = itemCount;
-            
+
             row.innerHTML = `
                 <input type="text" class="stock-no" value="${stockNo}" placeholder="e.g., 001">
                 <input type="text" class="unit" value="${unit}" placeholder="e.g., pcs">
@@ -728,7 +1032,7 @@
                 <input type="number" class="unit-cost" value="${unitCost}" min="0" step="0.01" onchange="updateTotal()" oninput="updateTotal()">
                 <button type="button" class="remove-btn" onclick="removeItemRow(this)">✕</button>
             `;
-            
+
             container.appendChild(row);
             itemCount++;
             updateTotal();
@@ -747,13 +1051,13 @@
         function updateTotal() {
             const rows = getItemRows();
             let total = 0;
-            
+
             rows.forEach(row => {
                 const quantity = parseFloat(row.querySelector('.quantity')?.value) || 0;
                 const unitCost = parseFloat(row.querySelector('.unit-cost')?.value) || 0;
                 total += quantity * unitCost;
             });
-            
+
             document.getElementById('totalCostDisplay').textContent = total.toFixed(2);
         }
 
@@ -762,12 +1066,16 @@
                 document.getElementById('prForm').reset();
                 document.getElementById('itemContainer').innerHTML = '';
                 document.getElementById('prNumber').value = generatePRNumber();
+                document.getElementById('msNumber').value = '';
                 document.getElementById('prDate').value = new Date().toISOString().split('T')[0];
                 document.getElementById('totalCostDisplay').textContent = '0.00';
                 document.getElementById('statusMessage').className = 'status-message';
                 document.getElementById('statusMessage').style.display = 'none';
                 document.getElementById('statusTracker').classList.remove('visible');
                 document.getElementById('progressSteps').innerHTML = '';
+                document.getElementById('msLoadStatus').className = 'ms-load-status';
+                document.getElementById('msBrowseList').classList.remove('visible');
+                document.getElementById('msSearchInput').value = '';
                 addItemRow('', '', '', 1, 0);
                 addItemRow('', '', '', 1, 0);
                 const submitBtn = document.getElementById('submitBtn');
@@ -786,26 +1094,105 @@
             statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
+        // ============================================
+        // PR: MARKET SURVEY LOOKUP
+        // ============================================
+        function showMSLoadStatus(message, type) {
+            const el = document.getElementById('msLoadStatus');
+            el.textContent = message;
+            el.className = 'ms-load-status ' + (type || '');
+        }
+
+        async function loadSurveyByNumber() {
+            const msNumber = document.getElementById('msSearchInput').value.trim();
+            if (!msNumber) {
+                showMSLoadStatus('Enter a Market Survey number first.', 'error');
+                return;
+            }
+            await fetchAndApplySurvey(msNumber);
+        }
+
+        async function fetchAndApplySurvey(msNumber) {
+            showMSLoadStatus('Searching for ' + msNumber + ' ...', '');
+            try {
+                const res = await fetch(SCRIPT_URL + '?action=getSurvey&msNumber=' + encodeURIComponent(msNumber));
+                const data = await res.json();
+
+                if (!data.success) {
+                    showMSLoadStatus('❌ ' + (data.error || 'Market Survey not found'), 'error');
+                    return;
+                }
+
+                document.getElementById('itemContainer').innerHTML = '';
+                data.items.forEach(it => {
+                    addItemRow('', it.unit || '', it.description || '', parseFloat(it.quantity) || 1, parseFloat(it.avgUnitPrice) || 0);
+                });
+
+                document.getElementById('msNumber').value = data.msNumber;
+                if (!document.getElementById('purpose').value.trim()) {
+                    document.getElementById('purpose').value = data.purpose || '';
+                }
+                updateTotal();
+
+                showMSLoadStatus(`✅ Loaded ${data.items.length} item(s) from ${data.msNumber} (unit prices = average of the 3 canvassed quotes)`, 'success');
+                document.getElementById('msBrowseList').classList.remove('visible');
+                document.getElementById('msSearchInput').value = data.msNumber;
+
+            } catch (err) {
+                showMSLoadStatus('❌ ' + err.message, 'error');
+            }
+        }
+
+        async function toggleBrowseSurveys() {
+            const list = document.getElementById('msBrowseList');
+            if (list.classList.contains('visible')) {
+                list.classList.remove('visible');
+                return;
+            }
+
+            list.innerHTML = '<div class="ms-browse-item">Loading recent surveys...</div>';
+            list.classList.add('visible');
+
+            try {
+                const res = await fetch(SCRIPT_URL + '?action=listSurveys');
+                const data = await res.json();
+
+                if (!data.success || !data.surveys || data.surveys.length === 0) {
+                    list.innerHTML = '<div class="ms-browse-item">No Market Surveys saved yet.</div>';
+                    return;
+                }
+
+                list.innerHTML = '';
+                data.surveys.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = 'ms-browse-item';
+                    div.innerHTML = `
+                        <div class="ms-num">${s.msNumber}</div>
+                        <div class="ms-meta">${s.dateAccomplished || ''} · ${s.endUser || ''} — ${(s.purpose || '').substring(0, 60)}</div>
+                    `;
+                    div.onclick = () => fetchAndApplySurvey(s.msNumber);
+                    list.appendChild(div);
+                });
+            } catch (err) {
+                list.innerHTML = '<div class="ms-browse-item">❌ ' + err.message + '</div>';
+            }
         }
 
         // ============================================
-        // MAIN SUBMIT FUNCTION
+        // PR: MAIN SUBMIT FUNCTION
         // ============================================
         async function submitPR() {
             if (isSubmitting) return;
-            
+
             document.getElementById('statusMessage').style.display = 'none';
             initStatusTracker();
 
             try {
-                // ---- STEP 1: Validate ----
                 updateStep('validate', 'active', 'Checking required fields...');
                 await sleep(300);
 
                 const required = ['entityName', 'officeSection', 'fundCluster', 'prDate', 'purpose', 'requesterName', 'requesterDesignation', 'approverName', 'approverDesignation'];
-                
+
                 for (let id of required) {
                     const field = document.getElementById(id);
                     if (!field || !field.value.trim()) {
@@ -818,25 +1205,24 @@
                 }
                 updateStep('validate', 'done', 'All required fields filled');
 
-                // ---- STEP 2: Prepare ----
                 updateStep('prepare', 'active', 'Processing items...');
                 await sleep(300);
 
                 const itemRows = getItemRows();
                 let hasValidItem = false;
                 let itemData = [];
-                
+
                 itemRows.forEach(row => {
                     const descInput = row.querySelector('.description');
                     const qtyInput = row.querySelector('.quantity');
                     const costInput = row.querySelector('.unit-cost');
-                    
+
                     if (!descInput || !qtyInput || !costInput) return;
-                    
+
                     const description = descInput.value.trim();
                     const quantity = parseFloat(qtyInput.value) || 0;
                     const unitCost = parseFloat(costInput.value) || 0;
-                    
+
                     if (description && quantity > 0 && unitCost >= 0) {
                         hasValidItem = true;
                         itemData.push({
@@ -858,7 +1244,6 @@
                 }
                 updateStep('prepare', 'done', itemData.length + ' items prepared');
 
-                // ---- STEP 3: Connect ----
                 updateStep('connect', 'active', 'Establishing connection...');
                 await sleep(300);
 
@@ -866,7 +1251,9 @@
                 const totalCost = parseFloat(document.getElementById('totalCostDisplay').textContent) || 0;
 
                 const formData = {
+                    action: 'submitPR',
                     prNumber: prNumber,
+                    msNumber: document.getElementById('msNumber').value.trim(),
                     entityName: document.getElementById('entityName').value.trim(),
                     officeSection: document.getElementById('officeSection').value.trim(),
                     fundCluster: document.getElementById('fundCluster').value.trim(),
@@ -886,7 +1273,6 @@
 
                 updateStep('connect', 'done', 'Connected');
 
-                // ---- STEP 4: Save ----
                 updateStep('save', 'active', 'Sending data...');
                 await sleep(300);
 
@@ -905,14 +1291,20 @@
 
                 if (result.success) {
                     updateStep('save', 'done', 'Saved');
-                    
+
                     updateStep('verify', 'active', 'Verifying...');
                     await sleep(300);
                     updateStep('verify', 'done', 'Verified');
 
                     setAllStepsDone();
                     showStatus('✅ Purchase Request successfully saved!', 'success');
-                    showNotification(prNumber, totalCost);
+                    showNotification(
+                        'Success!',
+                        'Your Purchase Request has been saved.',
+                        prNumber,
+                        'Total Cost: <strong>₱ ' + totalCost.toFixed(2) + '</strong>',
+                        true
+                    );
 
                 } else {
                     updateStep('save', 'error', result.error || 'Save failed');
@@ -923,7 +1315,7 @@
             } catch (error) {
                 console.error('Error:', error);
                 showStatus('❌ Error: ' + error.message, 'error');
-                
+
                 const activeStep = STEPS.find(s => stepStatus[s.id] === 'active');
                 if (activeStep) {
                     setStepError(activeStep.id, error.message);
@@ -939,10 +1331,353 @@
         }
 
         // ============================================
+        // MARKET SURVEY: STATUS TRACKER
+        // ============================================
+        const MS_STEPS = [
+            { id: 'ms-validate', label: 'Validating form data...', icon: '🔍' },
+            { id: 'ms-prepare', label: 'Averaging supplier quotes...', icon: '📊' },
+            { id: 'ms-save', label: 'Saving to Google Sheets...', icon: '💾' },
+            { id: 'ms-verify', label: 'Verifying save operation...', icon: '✅' }
+        ];
+
+        let msStepStatus = {};
+        let msStartTime = null;
+
+        function initMSStatusTracker() {
+            const tracker = document.getElementById('msStatusTracker');
+            tracker.classList.add('visible');
+            const container = document.getElementById('msProgressSteps');
+            container.innerHTML = '';
+            msStepStatus = {};
+            msStartTime = Date.now();
+
+            MS_STEPS.forEach((step) => {
+                msStepStatus[step.id] = 'pending';
+                const div = document.createElement('div');
+                div.className = 'step';
+                div.id = 'step-' + step.id;
+                div.innerHTML = `
+                    <span class="icon pending" id="icon-${step.id}">${step.icon}</span>
+                    <span class="step-label">${step.label}</span>
+                    <span class="step-status pending" id="status-${step.id}">Pending</span>
+                    <span class="step-time" id="time-${step.id}">--</span>
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById('msStatusBadge').textContent = 'Running...';
+            document.getElementById('msStatusBadge').className = 'badge running';
+        }
+
+        function updateMSStep(stepId, status, message) {
+            const step = MS_STEPS.find(s => s.id === stepId);
+            if (!step) return;
+
+            const el = document.getElementById('step-' + stepId);
+            const icon = document.getElementById('icon-' + stepId);
+            const statusEl = document.getElementById('status-' + stepId);
+            const timeEl = document.getElementById('time-' + stepId);
+
+            if (!el || !icon || !statusEl || !timeEl) return;
+
+            el.className = 'step';
+            icon.className = 'icon';
+
+            const elapsed = ((Date.now() - msStartTime) / 1000).toFixed(1);
+
+            switch(status) {
+                case 'active':
+                    el.classList.add('active-step');
+                    icon.classList.add('active');
+                    icon.textContent = '⏳';
+                    statusEl.textContent = message || 'Processing...';
+                    statusEl.className = 'step-status active';
+                    timeEl.textContent = elapsed + 's';
+                    break;
+                case 'done':
+                    el.classList.add('done-step');
+                    icon.classList.add('done');
+                    icon.textContent = '✅';
+                    statusEl.textContent = message || 'Done';
+                    statusEl.className = 'step-status done';
+                    timeEl.textContent = elapsed + 's';
+                    break;
+                case 'error':
+                    el.classList.add('error-step');
+                    icon.classList.add('error');
+                    icon.textContent = '❌';
+                    statusEl.textContent = message || 'Failed';
+                    statusEl.className = 'step-status error';
+                    timeEl.textContent = elapsed + 's';
+                    break;
+                default:
+                    icon.classList.add('pending');
+                    icon.textContent = step.icon;
+                    statusEl.textContent = 'Pending';
+                    statusEl.className = 'step-status pending';
+                    timeEl.textContent = '--';
+            }
+
+            msStepStatus[stepId] = status;
+        }
+
+        function setMSStepError(stepId, message) {
+            updateMSStep(stepId, 'error', message);
+            document.getElementById('msStatusBadge').textContent = 'Failed';
+            document.getElementById('msStatusBadge').className = 'badge error';
+        }
+
+        function setAllMSStepsDone() {
+            MS_STEPS.forEach(step => {
+                if (msStepStatus[step.id] !== 'error') {
+                    updateMSStep(step.id, 'done', 'Completed');
+                }
+            });
+            document.getElementById('msStatusBadge').textContent = 'Completed';
+            document.getElementById('msStatusBadge').className = 'badge done';
+        }
+
+        function showMSStatus(message, type) {
+            const statusDiv = document.getElementById('msStatusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status-message ' + type;
+            statusDiv.style.display = 'block';
+            statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // ============================================
+        // MARKET SURVEY: FORM FUNCTIONS
+        // ============================================
+        document.getElementById('msDate').value = new Date().toISOString().split('T')[0];
+
+        function generateMSNumber() {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            return `MS-${year}${month}${day}-${random}`;
+        }
+
+        document.getElementById('msFormNumber').value = generateMSNumber();
+
+        let msItemCount = 0;
+
+        function getMSItemRows() {
+            return document.querySelectorAll('#msItemContainer .ms-item-row');
+        }
+
+        function updateMSRowAverage(row) {
+            const p1 = parseFloat(row.querySelector('.ms-price1')?.value) || 0;
+            const p2 = parseFloat(row.querySelector('.ms-price2')?.value) || 0;
+            const p3 = parseFloat(row.querySelector('.ms-price3')?.value) || 0;
+            const avg = (p1 + p2 + p3) / 3;
+            row.querySelector('.avg-price').value = avg.toFixed(2);
+        }
+
+        function addMSItemRow(itemNo = '', quantity = 1, unit = '', description = '', price1 = 0, price2 = 0, price3 = 0) {
+            const container = document.getElementById('msItemContainer');
+            const row = document.createElement('div');
+            row.className = 'ms-item-row';
+            row.dataset.index = msItemCount;
+
+            row.innerHTML = `
+                <input type="text" class="ms-item-no" value="${itemNo}" placeholder="1">
+                <input type="number" class="ms-quantity" value="${quantity}" min="0.01" step="0.01">
+                <input type="text" class="ms-unit" value="${unit}" placeholder="pc">
+                <input type="text" class="ms-description" value="${description}" placeholder="Item description" required>
+                <input type="number" class="ms-price1" value="${price1}" min="0" step="0.01" oninput="updateMSRowAverage(this.closest('.ms-item-row'))">
+                <input type="number" class="ms-price2" value="${price2}" min="0" step="0.01" oninput="updateMSRowAverage(this.closest('.ms-item-row'))">
+                <input type="number" class="ms-price3" value="${price3}" min="0" step="0.01" oninput="updateMSRowAverage(this.closest('.ms-item-row'))">
+                <input type="text" class="avg-price" value="0.00" readonly>
+                <button type="button" class="remove-btn" onclick="removeMSItemRow(this)">✕</button>
+            `;
+
+            container.appendChild(row);
+            msItemCount++;
+            updateMSRowAverage(row);
+        }
+
+        function removeMSItemRow(btn) {
+            const rows = getMSItemRows();
+            if (rows.length > 1) {
+                btn.closest('.ms-item-row').remove();
+            } else {
+                alert('You need at least one item.');
+            }
+        }
+
+        function resetMSForm() {
+            if (confirm('Are you sure you want to reset the Market Survey form? All data will be lost.')) {
+                document.getElementById('msForm').reset();
+                document.getElementById('msItemContainer').innerHTML = '';
+                document.getElementById('msFormNumber').value = generateMSNumber();
+                document.getElementById('msDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('msStatusMessage').className = 'status-message';
+                document.getElementById('msStatusMessage').style.display = 'none';
+                document.getElementById('msStatusTracker').classList.remove('visible');
+                document.getElementById('msProgressSteps').innerHTML = '';
+                addMSItemRow('1', 1, '', '', 0, 0, 0);
+                const submitBtn = document.getElementById('msSubmitBtn');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '💾 Save Market Survey';
+                closeNotification();
+            }
+        }
+
+        async function submitMarketSurvey() {
+            document.getElementById('msStatusMessage').style.display = 'none';
+            initMSStatusTracker();
+
+            try {
+                updateMSStep('ms-validate', 'active', 'Checking required fields...');
+                await sleep(300);
+
+                const required = ['msDate', 'msEndUser', 'msPurpose', 's1Name', 's2Name', 's3Name'];
+                for (let id of required) {
+                    const field = document.getElementById(id);
+                    if (!field || !field.value.trim()) {
+                        setMSStepError('ms-validate', 'Missing required field');
+                        showMSStatus('Please fill in all required fields (including all 3 supplier names).', 'error');
+                        if (field) field.focus();
+                        return;
+                    }
+                }
+
+                const itemRows = getMSItemRows();
+                let items = [];
+                let hasValidItem = false;
+
+                itemRows.forEach(row => {
+                    const description = row.querySelector('.ms-description')?.value?.trim() || '';
+                    const quantity = parseFloat(row.querySelector('.ms-quantity')?.value) || 0;
+                    if (description && quantity > 0) {
+                        hasValidItem = true;
+                        items.push({
+                            itemNo: row.querySelector('.ms-item-no')?.value?.trim() || '',
+                            quantity: quantity,
+                            unit: row.querySelector('.ms-unit')?.value?.trim() || '',
+                            description: description,
+                            price1: parseFloat(row.querySelector('.ms-price1')?.value) || 0,
+                            price2: parseFloat(row.querySelector('.ms-price2')?.value) || 0,
+                            price3: parseFloat(row.querySelector('.ms-price3')?.value) || 0
+                        });
+                    }
+                });
+
+                if (!hasValidItem) {
+                    setMSStepError('ms-validate', 'No valid items');
+                    showMSStatus('Please add at least one valid item with description and quantity.', 'error');
+                    return;
+                }
+                updateMSStep('ms-validate', 'done', 'All required fields filled');
+
+                updateMSStep('ms-prepare', 'active', 'Averaging quotes...');
+                await sleep(300);
+                updateMSStep('ms-prepare', 'done', items.length + ' item(s) prepared');
+
+                const msNumber = document.getElementById('msFormNumber').value;
+
+                const formData = {
+                    action: 'submitMarketSurvey',
+                    msNumber: msNumber,
+                    dateAccomplished: document.getElementById('msDate').value,
+                    endUser: document.getElementById('msEndUser').value.trim(),
+                    purpose: document.getElementById('msPurpose').value.trim(),
+                    items: items,
+                    suppliers: [
+                        {
+                            name: document.getElementById('s1Name').value.trim(),
+                            address: document.getElementById('s1Address').value.trim(),
+                            philgeps: document.getElementById('s1Philgeps').value.trim(),
+                            tin: document.getElementById('s1Tin').value.trim(),
+                            contact: document.getElementById('s1Contact').value.trim(),
+                            email: document.getElementById('s1Email').value.trim(),
+                            signatory: document.getElementById('s1Signatory').value.trim(),
+                            designation: document.getElementById('s1Designation').value.trim()
+                        },
+                        {
+                            name: document.getElementById('s2Name').value.trim(),
+                            address: document.getElementById('s2Address').value.trim(),
+                            philgeps: document.getElementById('s2Philgeps').value.trim(),
+                            tin: document.getElementById('s2Tin').value.trim(),
+                            contact: document.getElementById('s2Contact').value.trim(),
+                            email: document.getElementById('s2Email').value.trim(),
+                            signatory: document.getElementById('s2Signatory').value.trim(),
+                            designation: document.getElementById('s2Designation').value.trim()
+                        },
+                        {
+                            name: document.getElementById('s3Name').value.trim(),
+                            address: document.getElementById('s3Address').value.trim(),
+                            philgeps: document.getElementById('s3Philgeps').value.trim(),
+                            tin: document.getElementById('s3Tin').value.trim(),
+                            contact: document.getElementById('s3Contact').value.trim(),
+                            email: document.getElementById('s3Email').value.trim(),
+                            signatory: document.getElementById('s3Signatory').value.trim(),
+                            designation: document.getElementById('s3Designation').value.trim()
+                        }
+                    ],
+                    timestamp: new Date().toISOString()
+                };
+
+                updateMSStep('ms-save', 'active', 'Sending data...');
+                await sleep(300);
+
+                const submitBtn = document.getElementById('msSubmitBtn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner"></span> Saving...';
+
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    updateMSStep('ms-save', 'done', 'Saved');
+                    updateMSStep('ms-verify', 'active', 'Verifying...');
+                    await sleep(300);
+                    updateMSStep('ms-verify', 'done', 'Verified');
+                    setAllMSStepsDone();
+
+                    showMSStatus('✅ Market Survey successfully saved!', 'success');
+                    showNotification(
+                        'Market Survey Saved!',
+                        'Use its number to auto-fill items in a Purchase Request.',
+                        msNumber,
+                        '',
+                        false
+                    );
+                } else {
+                    updateMSStep('ms-save', 'error', result.error || 'Save failed');
+                    setMSStepError('ms-save', result.error || 'Unknown error');
+                    showMSStatus('❌ Error: ' + (result.error || 'Unknown error'), 'error');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showMSStatus('❌ Error: ' + error.message, 'error');
+                const activeStep = MS_STEPS.find(s => msStepStatus[s.id] === 'active');
+                if (activeStep) {
+                    setMSStepError(activeStep.id, error.message);
+                } else {
+                    setMSStepError('ms-validate', error.message);
+                }
+            }
+
+            const submitBtn = document.getElementById('msSubmitBtn');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '💾 Save Market Survey';
+        }
+
+        // ============================================
         // INITIALIZE
         // ============================================
         addItemRow('', '', '', 1, 0);
         addItemRow('', '', '', 1, 0);
+        addMSItemRow('1', 1, '', '', 0, 0, 0);
 
         document.getElementById('notificationOverlay').addEventListener('click', function(e) {
             if (e.target === this) closeNotification();
