@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Connection</title>
+</head>
+<body>
+    <h1>Test Google Apps Script Connection</h1>
+    <button onclick="testConnection()">Test Connection</button>
+    <pre id="result"></pre>
+
+    <script>
+        // UPDATE THIS WITH YOUR NEW URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_NEW_URL/exec';
+
+        async function testConnection() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = 'Testing...';
+            
+            try {
+                // Test GET
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                resultDiv.textContent = '✅ GET Success:\n' + JSON.stringify(data, null, 2);
+                
+                // Test POST with dummy data
+                const postResponse = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prNumber: 'TEST-001',
+                        entityName: 'Test Entity',
+                        officeSection: 'Test Office',
+                        fundCluster: 'Test Fund',
+                        prDate: '2026-08-25',
+                        purpose: 'Test purpose',
+                        items: [{ description: 'Test Item', quantity: 1, unitCost: 100, totalCost: 100 }],
+                        totalCost: 100,
+                        requesterName: 'Test Requester',
+                        requesterDesignation: 'Test Designation',
+                        approverName: 'Test Approver',
+                        approverDesignation: 'Test Designation',
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                
+                const postData = await postResponse.json();
+                resultDiv.textContent += '\n\n✅ POST Success:\n' + JSON.stringify(postData, null, 2);
+                
+            } catch (error) {
+                resultDiv.textContent = '❌ Error:\n' + error.message;
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
