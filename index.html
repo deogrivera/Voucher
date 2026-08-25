@@ -135,9 +135,6 @@
             text-align: center;
         }
 
-        /* ============================================
-           STATUS TRACKER STYLES
-           ============================================ */
         .status-tracker {
             margin-top: 20px;
             padding: 20px;
@@ -298,7 +295,6 @@
             background: #fff5f5;
         }
 
-        /* Summary notification */
         .notification-overlay {
             position: fixed;
             top: 0;
@@ -374,7 +370,6 @@
             flex-wrap: wrap;
         }
 
-        /* Status message (simple) */
         .status-message {
             padding: 15px;
             margin-top: 15px;
@@ -451,7 +446,6 @@
         <h1>📋 PURCHASE REQUEST FORM</h1>
         
         <form id="prForm">
-            <!-- Entity Information -->
             <div class="form-section">
                 <h3>Entity Information</h3>
                 <div class="form-group">
@@ -472,7 +466,6 @@
                 </div>
             </div>
 
-            <!-- PR Details -->
             <div class="form-section">
                 <h3>Purchase Request Details</h3>
                 <div class="form-group">
@@ -489,7 +482,6 @@
                 </div>
             </div>
 
-            <!-- Items -->
             <div class="form-section">
                 <h3>Items</h3>
                 <div class="items-section">
@@ -502,7 +494,7 @@
                         <span>Action</span>
                     </div>
                     <div id="itemContainer"></div>
-                    <button type="button" class="btn btn-success" onclick="addItem()" style="margin-top:10px; font-size:13px; padding:8px 15px;">
+                    <button type="button" class="btn btn-success" onclick="addItemRow()" style="margin-top:10px; font-size:13px; padding:8px 15px;">
                         + Add Item
                     </button>
                     <div class="total-cost">
@@ -511,7 +503,6 @@
                 </div>
             </div>
 
-            <!-- Signatories -->
             <div class="form-section">
                 <h3>Signatories</h3>
                 <div class="form-group">
@@ -546,26 +537,18 @@
                 <button type="reset" class="btn btn-danger" onclick="resetForm()">🔄 Reset Form</button>
             </div>
 
-            <!-- ============================================
-                 STATUS TRACKER
-                 ============================================ -->
             <div id="statusTracker" class="status-tracker">
                 <h4>
                     ⏳ Processing Status
                     <span id="statusBadge" class="badge">Starting...</span>
                 </h4>
-                <div id="progressSteps" class="progress-steps">
-                    <!-- Steps will be dynamically added -->
-                </div>
+                <div id="progressSteps" class="progress-steps"></div>
             </div>
 
             <div id="statusMessage" class="status-message"></div>
         </form>
     </div>
 
-    <!-- ============================================
-         NOTIFICATION OVERLAY
-         ============================================ -->
     <div id="notificationOverlay" class="notification-overlay">
         <div class="notification-box">
             <div class="icon-big" id="notifIcon">✅</div>
@@ -582,7 +565,7 @@
 
     <script>
         // ============================================
-        // UPDATE THIS URL WITH YOUR DEPLOYMENT URL
+        // CONFIGURATION - UPDATE WITH YOUR WEB APP URL
         // ============================================
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfm2LjNN4HAsiMKx70YlusrajC8xqZQzYTlH-JhnQQyQ-JNiafIFxuMbahiuYLud3sOA/exec';
         
@@ -590,7 +573,7 @@
         let isSubmitting = false;
 
         // ============================================
-        // STATUS TRACKER FUNCTIONS
+        // STATUS TRACKER
         // ============================================
         const STEPS = [
             { id: 'validate', label: 'Validating form data...', icon: '🔍' },
@@ -611,7 +594,7 @@
             stepStatus = {};
             startTime = Date.now();
 
-            STEPS.forEach((step, index) => {
+            STEPS.forEach((step) => {
                 stepStatus[step.id] = 'pending';
                 const div = document.createElement('div');
                 div.className = 'step';
@@ -638,11 +621,11 @@
             const statusEl = document.getElementById('status-' + stepId);
             const timeEl = document.getElementById('time-' + stepId);
 
-            // Remove old classes
+            if (!el || !icon || !statusEl || !timeEl) return;
+
             el.className = 'step';
             icon.className = 'icon';
 
-            const now = new Date();
             const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
 
             switch(status) {
@@ -670,7 +653,7 @@
                     statusEl.className = 'step-status error';
                     timeEl.textContent = elapsed + 's';
                     break;
-                default: // pending
+                default:
                     icon.classList.add('pending');
                     icon.textContent = step.icon;
                     statusEl.textContent = 'Pending';
@@ -698,7 +681,7 @@
         }
 
         // ============================================
-        // NOTIFICATION FUNCTIONS
+        // NOTIFICATION
         // ============================================
         function showNotification(prNumber, totalCost) {
             document.getElementById('notifPRNumber').textContent = prNumber;
@@ -726,7 +709,12 @@
 
         document.getElementById('prNumber').value = generatePRNumber();
 
-        function addItem(stockNo = '', unit = '', description = '', quantity = 1, unitCost = 0) {
+        // FIXED: Get all item rows safely
+        function getItemRows() {
+            return document.querySelectorAll('#itemContainer .item-row');
+        }
+
+        function addItemRow(stockNo = '', unit = '', description = '', quantity = 1, unitCost = 0) {
             const container = document.getElementById('itemContainer');
             const row = document.createElement('div');
             row.className = 'item-row';
@@ -738,7 +726,7 @@
                 <input type="text" class="description" value="${description}" placeholder="Item description" required>
                 <input type="number" class="quantity" value="${quantity}" min="1" step="1" onchange="updateTotal()" oninput="updateTotal()">
                 <input type="number" class="unit-cost" value="${unitCost}" min="0" step="0.01" onchange="updateTotal()" oninput="updateTotal()">
-                <button type="button" class="remove-btn" onclick="removeItem(this)">✕</button>
+                <button type="button" class="remove-btn" onclick="removeItemRow(this)">✕</button>
             `;
             
             container.appendChild(row);
@@ -746,10 +734,10 @@
             updateTotal();
         }
 
-        function removeItem(btn) {
-            const row = btn.parentElement;
-            if (document.querySelectorAll('.item-row').length > 1) {
-                row.remove();
+        function removeItemRow(btn) {
+            const rows = getItemRows();
+            if (rows.length > 1) {
+                btn.closest('.item-row').remove();
                 updateTotal();
             } else {
                 alert('You need at least one item.');
@@ -757,12 +745,12 @@
         }
 
         function updateTotal() {
-            const rows = document.querySelectorAll('.item-row');
+            const rows = getItemRows();
             let total = 0;
             
             rows.forEach(row => {
-                const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
-                const unitCost = parseFloat(row.querySelector('.unit-cost').value) || 0;
+                const quantity = parseFloat(row.querySelector('.quantity')?.value) || 0;
+                const unitCost = parseFloat(row.querySelector('.unit-cost')?.value) || 0;
                 total += quantity * unitCost;
             });
             
@@ -780,8 +768,8 @@
                 document.getElementById('statusMessage').style.display = 'none';
                 document.getElementById('statusTracker').classList.remove('visible');
                 document.getElementById('progressSteps').innerHTML = '';
-                addItem('', '', '', 1, 0);
-                addItem('', '', '', 1, 0);
+                addItemRow('', '', '', 1, 0);
+                addItemRow('', '', '', 1, 0);
                 const submitBtn = document.getElementById('submitBtn');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '💾 Save Purchase Request';
@@ -798,16 +786,17 @@
             statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
         // ============================================
-        // MAIN SUBMIT FUNCTION WITH STATUS TRACKING
+        // MAIN SUBMIT FUNCTION
         // ============================================
         async function submitPR() {
             if (isSubmitting) return;
             
-            // Hide any previous status
             document.getElementById('statusMessage').style.display = 'none';
-            
-            // Initialize status tracker
             initStatusTracker();
 
             try {
@@ -819,11 +808,11 @@
                 
                 for (let id of required) {
                     const field = document.getElementById(id);
-                    if (!field.value.trim()) {
-                        updateStep('validate', 'error', 'Missing: ' + field.previousElementSibling.textContent.trim());
+                    if (!field || !field.value.trim()) {
+                        updateStep('validate', 'error', 'Missing: ' + (field?.previousElementSibling?.textContent?.trim() || id));
                         setStepError('validate', 'Missing required field');
-                        showStatus(`Please fill in: ${field.previousElementSibling.textContent.trim()}`, 'error');
-                        field.focus();
+                        showStatus(`Please fill in all required fields.`, 'error');
+                        if (field) field.focus();
                         return;
                     }
                 }
@@ -833,20 +822,26 @@
                 updateStep('prepare', 'active', 'Processing items...');
                 await sleep(300);
 
-                const itemRows = document.querySelectorAll('.item-row');
+                const itemRows = getItemRows();
                 let hasValidItem = false;
                 let itemData = [];
                 
                 itemRows.forEach(row => {
-                    const description = row.querySelector('.description').value.trim();
-                    const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
-                    const unitCost = parseFloat(row.querySelector('.unit-cost').value) || 0;
+                    const descInput = row.querySelector('.description');
+                    const qtyInput = row.querySelector('.quantity');
+                    const costInput = row.querySelector('.unit-cost');
+                    
+                    if (!descInput || !qtyInput || !costInput) return;
+                    
+                    const description = descInput.value.trim();
+                    const quantity = parseFloat(qtyInput.value) || 0;
+                    const unitCost = parseFloat(costInput.value) || 0;
                     
                     if (description && quantity > 0 && unitCost >= 0) {
                         hasValidItem = true;
                         itemData.push({
-                            stockNo: row.querySelector('.stock-no').value.trim(),
-                            unit: row.querySelector('.unit').value.trim(),
+                            stockNo: row.querySelector('.stock-no')?.value?.trim() || '',
+                            unit: row.querySelector('.unit')?.value?.trim() || '',
                             description: description,
                             quantity: quantity,
                             unitCost: unitCost,
@@ -855,7 +850,7 @@
                     }
                 });
 
-                if (!hasValidItem) {
+                if (!hasValidItem || itemData.length === 0) {
                     updateStep('prepare', 'error', 'No valid items found');
                     setStepError('prepare', 'No valid items');
                     showStatus('Please add at least one valid item with description, quantity, and unit cost.', 'error');
@@ -868,7 +863,7 @@
                 await sleep(300);
 
                 const prNumber = document.getElementById('prNumber').value;
-                const totalCost = parseFloat(document.getElementById('totalCostDisplay').textContent);
+                const totalCost = parseFloat(document.getElementById('totalCostDisplay').textContent) || 0;
 
                 const formData = {
                     prNumber: prNumber,
@@ -889,13 +884,12 @@
                     timestamp: new Date().toISOString()
                 };
 
-                updateStep('connect', 'done', 'Connected to Google Sheets');
+                updateStep('connect', 'done', 'Connected');
 
                 // ---- STEP 4: Save ----
                 updateStep('save', 'active', 'Sending data...');
                 await sleep(300);
 
-                // Disable submit button
                 isSubmitting = true;
                 const submitBtn = document.getElementById('submitBtn');
                 submitBtn.disabled = true;
@@ -910,17 +904,14 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    updateStep('save', 'done', 'Data saved successfully');
+                    updateStep('save', 'done', 'Saved');
                     
-                    // ---- STEP 5: Verify ----
                     updateStep('verify', 'active', 'Verifying...');
                     await sleep(300);
                     updateStep('verify', 'done', 'Verified');
 
                     setAllStepsDone();
                     showStatus('✅ Purchase Request successfully saved!', 'success');
-
-                    // Show notification
                     showNotification(prNumber, totalCost);
 
                 } else {
@@ -933,29 +924,26 @@
                 console.error('Error:', error);
                 showStatus('❌ Error: ' + error.message, 'error');
                 
-                // Mark current step as error
                 const activeStep = STEPS.find(s => stepStatus[s.id] === 'active');
                 if (activeStep) {
                     setStepError(activeStep.id, error.message);
+                } else {
+                    setStepError('validate', error.message);
                 }
             }
 
-            // Reset submit button
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = false;
             submitBtn.innerHTML = '💾 Save Purchase Request';
             isSubmitting = false;
         }
 
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
+        // ============================================
+        // INITIALIZE
+        // ============================================
+        addItemRow('', '', '', 1, 0);
+        addItemRow('', '', '', 1, 0);
 
-        // Initialize with two empty rows
-        addItem('', '', '', 1, 0);
-        addItem('', '', '', 1, 0);
-
-        // Close notification on overlay click
         document.getElementById('notificationOverlay').addEventListener('click', function(e) {
             if (e.target === this) closeNotification();
         });
