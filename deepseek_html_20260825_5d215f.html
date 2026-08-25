@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Request System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #1a3c6e;
+            border-bottom: 3px solid #1a3c6e;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .form-section {
+            border: 1px solid #dde1e6;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background: #fafbfc;
+        }
+
+        .form-section h3 {
+            color: #1a3c6e;
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-left: 4px solid #1a3c6e;
+            padding-left: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .form-group label {
+            width: 180px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+
+        .form-group textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .items-section {
+            margin-top: 10px;
+        }
+
+        .item-row {
+            display: grid;
+            grid-template-columns: 80px 150px 200px 100px 120px 80px;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .item-row input {
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            width: 100%;
+        }
+
+        .item-row .header {
+            font-weight: 700;
+            background: #e9ecef;
+            padding: 8px;
+            text-align: center;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #1a3c6e;
+        }
+
+        .btn {
+            background: #1a3c6e;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background: #2a5a8e;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .button-group {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .status-message {
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .total-cost {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a3c6e;
+            text-align: right;
+            margin-top: 10px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .remove-btn:hover {
+            background: #c82333;
+        }
+
+        @media (max-width: 768px) {
+            .form-group label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            
+            .item-row {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+            
+            .item-row .header {
+                display: none;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 PURCHASE REQUEST FORM</h1>
+        
+        <form id="prForm">
+            <!-- Entity Information -->
+            <div class="form-section">
+                <h3>Entity Information</h3>
+                <div class="form-group">
+                    <label for="entityName">Entity Name:</label>
+                    <input type="text" id="entityName" placeholder="e.g., City Government of Manila" required>
+                </div>
+                <div class="form-group">
+                    <label for="officeSection">Office/Section:</label>
+                    <input type="text" id="officeSection" placeholder="e.g., Finance Department" required>
+                </div>
+                <div class="form-group">
+                    <label for="fundCluster">Fund Cluster:</label>
+                    <input type="text" id="fundCluster" placeholder="e.g., General Fund" required>
+                </div>
+                <div class="form-group">
+                    <label for="rcCode">Responsibility Center Code:</label>
+                    <input type="text" id="rcCode" placeholder="e.g., 101-001">
+                </div>
+            </div>
+
+            <!-- PR Details -->
+            <div class="form-section">
+                <h3>Purchase Request Details</h3>
+                <div class="form-group">
+                    <label for="prNumber">PR No.:</label>
+                    <input type="text" id="prNumber" placeholder="Auto-generated" readonly style="background: #e9ecef;">
+                </div>
+                <div class="form-group">
+                    <label for="prDate">Date:</label>
+                    <input type="date" id="prDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="purpose">Purpose:</label>
+                    <textarea id="purpose" placeholder="State the purpose of this purchase..." required></textarea>
+                </div>
+            </div>
+
+            <!-- Items -->
+            <div class="form-section">
+                <h3>Items</h3>
+                <div class="items-section">
+                    <div class="item-row header">
+                        <span>Stock/Property No.</span>
+                        <span>Unit</span>
+                        <span>Item Description</span>
+                        <span>Quantity</span>
+                        <span>Unit Cost</span>
+                        <span>Action</span>
+                    </div>
+                    <div id="itemContainer">
+                        <!-- Item rows will be added here -->
+                    </div>
+                    <button type="button" class="btn btn-success" onclick="addItem()" style="margin-top:10px; font-size:13px; padding:8px 15px;">
+                        + Add Item
+                    </button>
+                    <div class="total-cost">
+                        Total Cost: ₱ <span id="totalCostDisplay">0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signatories -->
+            <div class="form-section">
+                <h3>Signatories</h3>
+                <div class="form-group">
+                    <label for="requesterSignature">Signature:</label>
+                    <input type="text" id="requesterSignature" placeholder="Sign name here">
+                </div>
+                <div class="form-group">
+                    <label for="requesterName">Printed Name:</label>
+                    <input type="text" id="requesterName" required>
+                </div>
+                <div class="form-group">
+                    <label for="requesterDesignation">Designation:</label>
+                    <input type="text" id="requesterDesignation" required>
+                </div>
+                <hr style="margin: 15px 0;">
+                <div class="form-group">
+                    <label for="approverSignature">Signature:</label>
+                    <input type="text" id="approverSignature" placeholder="Sign name here">
+                </div>
+                <div class="form-group">
+                    <label for="approverName">Printed Name:</label>
+                    <input type="text" id="approverName" required>
+                </div>
+                <div class="form-group">
+                    <label for="approverDesignation">Designation:</label>
+                    <input type="text" id="approverDesignation" required>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="button-group">
+                <button type="button" class="btn" onclick="submitPR()">💾 Save Purchase Request</button>
+                <button type="reset" class="btn btn-danger" onclick="resetForm()">🔄 Reset Form</button>
+            </div>
+
+            <div id="statusMessage" class="status-message"></div>
+        </form>
+    </div>
+
+    <script>
+        // Initialize with 2 empty item rows
+        let itemCount = 0;
+
+        // Set today's date as default
+        document.getElementById('prDate').value = new Date().toISOString().split('T')[0];
+
+        // Generate PR number (you can customize this format)
+        function generatePRNumber() {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            return `PR-${year}${month}${day}-${random}`;
+        }
+
+        // Set PR number on page load
+        document.getElementById('prNumber').value = generatePRNumber();
+
+        // Add item row
+        function addItem(stockNo = '', unit = '', description = '', quantity = 1, unitCost = 0) {
+            const container = document.getElementById('itemContainer');
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.dataset.index = itemCount;
+            
+            row.innerHTML = `
+                <input type="text" class="stock-no" value="${stockNo}" placeholder="e.g., 001">
+                <input type="text" class="unit" value="${unit}" placeholder="e.g., pcs">
+                <input type="text" class="description" value="${description}" placeholder="Item description" required>
+                <input type="number" class="quantity" value="${quantity}" min="1" step="1" onchange="updateTotal()">
+                <input type="number" class="unit-cost" value="${unitCost}" min="0" step="0.01" onchange="updateTotal()">
+                <button type="button" class="remove-btn" onclick="removeItem(this)">✕</button>
+            `;
+            
+            container.appendChild(row);
+            itemCount++;
+            updateTotal();
+        }
+
+        // Remove item row
+        function removeItem(btn) {
+            const row = btn.parentElement;
+            if (document.querySelectorAll('.item-row').length > 1) {
+                row.remove();
+                updateTotal();
+            } else {
+                alert('You need at least one item.');
+            }
+        }
+
+        // Update total cost
+        function updateTotal() {
+            const rows = document.querySelectorAll('.item-row');
+            let total = 0;
+            
+            rows.forEach(row => {
+                const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+                const unitCost = parseFloat(row.querySelector('.unit-cost').value) || 0;
+                total += quantity * unitCost;
+            });
+            
+            document.getElementById('totalCostDisplay').textContent = total.toFixed(2);
+        }
+
+        // Reset form
+        function resetForm() {
+            if (confirm('Are you sure you want to reset the form? All data will be lost.')) {
+                document.getElementById('prForm').reset();
+                document.getElementById('itemContainer').innerHTML = '';
+                document.getElementById('prNumber').value = generatePRNumber();
+                document.getElementById('prDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('totalCostDisplay').textContent = '0.00';
+                document.getElementById('statusMessage').className = 'status-message';
+                document.getElementById('statusMessage').style.display = 'none';
+                // Add default items
+                addItem('', '', '', 1, 0);
+                addItem('', '', '', 1, 0);
+            }
+        }
+
+        // Submit PR to Google Sheets
+        async function submitPR() {
+            // Validate required fields
+            const required = ['entityName', 'officeSection', 'fundCluster', 'prDate', 'purpose', 'requesterName', 'requesterDesignation', 'approverName', 'approverDesignation'];
+            
+            for (let id of required) {
+                const field = document.getElementById(id);
+                if (!field.value.trim()) {
+                    showStatus(`Please fill in: ${field.previousElementSibling.textContent.trim()}`, 'error');
+                    field.focus();
+                    return;
+                }
+            }
+
+            // Validate at least one item with description
+            const itemRows = document.querySelectorAll('.item-row');
+            let hasValidItem = false;
+            let itemData = [];
+            
+            itemRows.forEach(row => {
+                const description = row.querySelector('.description').value.trim();
+                const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+                const unitCost = parseFloat(row.querySelector('.unit-cost').value) || 0;
+                
+                if (description && quantity > 0 && unitCost >= 0) {
+                    hasValidItem = true;
+                    itemData.push({
+                        stockNo: row.querySelector('.stock-no').value.trim(),
+                        unit: row.querySelector('.unit').value.trim(),
+                        description: description,
+                        quantity: quantity,
+                        unitCost: unitCost,
+                        totalCost: quantity * unitCost
+                    });
+                }
+            });
+
+            if (!hasValidItem) {
+                showStatus('Please add at least one valid item with description, quantity, and unit cost.', 'error');
+                return;
+            }
+
+            // Prepare data for Google Sheets
+            const formData = {
+                prNumber: document.getElementById('prNumber').value,
+                entityName: document.getElementById('entityName').value.trim(),
+                officeSection: document.getElementById('officeSection').value.trim(),
+                fundCluster: document.getElementById('fundCluster').value.trim(),
+                rcCode: document.getElementById('rcCode').value.trim(),
+                prDate: document.getElementById('prDate').value,
+                purpose: document.getElementById('purpose').value.trim(),
+                items: itemData,
+                totalCost: parseFloat(document.getElementById('totalCostDisplay').textContent),
+                requesterSignature: document.getElementById('requesterSignature').value.trim(),
+                requesterName: document.getElementById('requesterName').value.trim(),
+                requesterDesignation: document.getElementById('requesterDesignation').value.trim(),
+                approverSignature: document.getElementById('approverSignature').value.trim(),
+                approverName: document.getElementById('approverName').value.trim(),
+                approverDesignation: document.getElementById('approverDesignation').value.trim(),
+                timestamp: new Date().toISOString()
+            };
+
+            // Send to Google Apps Script
+            try {
+                // REPLACE THIS URL WITH YOUR DEPLOYED GOOGLE APPS SCRIPT URL
+                const scriptURL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+                
+                const response = await fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Important for cross-origin requests
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                showStatus('✅ Purchase Request successfully saved! New PR Number: ' + formData.prNumber, 'success');
+                
+                // Optionally, open the report page to view the PR
+                if (confirm('View the completed PR form now?')) {
+                    // You'll create this page next
+                    window.open('pr-report.html?pr=' + formData.prNumber, '_blank');
+                }
+                
+                // Reset form after successful submission
+                setTimeout(() => {
+                    if (confirm('Do you want to start a new PR?')) {
+                        resetForm();
+                    }
+                }, 1000);
+
+            } catch (error) {
+                console.error('Error submitting PR:', error);
+                showStatus('❌ Error saving PR. Please check your connection and try again.', 'error');
+            }
+        }
+
+        // Show status messages
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status-message ' + type;
+            statusDiv.style.display = 'block';
+            statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Add initial rows
+        addItem('', '', '', 1, 0);
+        addItem('', '', '', 1, 0);
+    </script>
+</body>
+</html>
