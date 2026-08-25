@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Purchase Request System</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -131,6 +135,246 @@
             text-align: center;
         }
 
+        /* ============================================
+           STATUS TRACKER STYLES
+           ============================================ */
+        .status-tracker {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            display: none;
+        }
+
+        .status-tracker.visible {
+            display: block;
+        }
+
+        .status-tracker h4 {
+            color: #1a3c6e;
+            margin-bottom: 15px;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-tracker h4 .badge {
+            font-size: 11px;
+            background: #6c757d;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: normal;
+        }
+
+        .status-tracker h4 .badge.running {
+            background: #17a2b8;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-tracker h4 .badge.done {
+            background: #28a745;
+        }
+
+        .status-tracker h4 .badge.error {
+            background: #dc3545;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .progress-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: white;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .step .icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 13px;
+            flex-shrink: 0;
+            background: #e9ecef;
+            color: #6c757d;
+        }
+
+        .step .icon.pending {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+
+        .step .icon.active {
+            background: #17a2b8;
+            color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        .step .icon.done {
+            background: #28a745;
+            color: white;
+        }
+
+        .step .icon.error {
+            background: #dc3545;
+            color: white;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .step .step-label {
+            flex: 1;
+            color: #333;
+        }
+
+        .step .step-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .step .step-status.pending {
+            color: #6c757d;
+            background: #e9ecef;
+        }
+
+        .step .step-status.active {
+            color: #17a2b8;
+            background: #d1ecf1;
+        }
+
+        .step .step-status.done {
+            color: #28a745;
+            background: #d4edda;
+        }
+
+        .step .step-status.error {
+            color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .step .step-time {
+            font-size: 11px;
+            color: #999;
+            font-family: monospace;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .step.active-step {
+            border-color: #17a2b8;
+            background: #f0f9ff;
+        }
+
+        .step.done-step {
+            border-color: #28a745;
+            background: #f0fff4;
+        }
+
+        .step.error-step {
+            border-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        /* Summary notification */
+        .notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .notification-overlay.visible {
+            display: flex;
+        }
+
+        .notification-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-box .icon-big {
+            font-size: 56px;
+            margin-bottom: 10px;
+        }
+
+        .notification-box h2 {
+            color: #1a3c6e;
+            margin-bottom: 5px;
+        }
+
+        .notification-box .subtitle {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .notification-box .pr-number {
+            background: #e9ecef;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a3c6e;
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        .notification-box .btn-group {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Status message (simple) */
         .status-message {
             padding: 15px;
             margin-top: 15px;
@@ -149,13 +393,6 @@
             background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
-            display: block;
-        }
-
-        .status-message.loading {
-            background: #cce5ff;
-            color: #004085;
-            border: 1px solid #b8daff;
             display: block;
         }
 
@@ -194,10 +431,6 @@
             vertical-align: middle;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
         @media (max-width: 768px) {
             .form-group label {
                 width: 100%;
@@ -209,6 +442,7 @@
             }
             .item-row .header { display: none; }
             .container { padding: 15px; }
+            .notification-box { padding: 25px; }
         }
     </style>
 </head>
@@ -312,23 +546,175 @@
                 <button type="reset" class="btn btn-danger" onclick="resetForm()">🔄 Reset Form</button>
             </div>
 
+            <!-- ============================================
+                 STATUS TRACKER
+                 ============================================ -->
+            <div id="statusTracker" class="status-tracker">
+                <h4>
+                    ⏳ Processing Status
+                    <span id="statusBadge" class="badge">Starting...</span>
+                </h4>
+                <div id="progressSteps" class="progress-steps">
+                    <!-- Steps will be dynamically added -->
+                </div>
+            </div>
+
             <div id="statusMessage" class="status-message"></div>
         </form>
     </div>
 
+    <!-- ============================================
+         NOTIFICATION OVERLAY
+         ============================================ -->
+    <div id="notificationOverlay" class="notification-overlay">
+        <div class="notification-box">
+            <div class="icon-big" id="notifIcon">✅</div>
+            <h2 id="notifTitle">Success!</h2>
+            <p class="subtitle" id="notifSubtitle">Your Purchase Request has been saved.</p>
+            <div class="pr-number" id="notifPRNumber">PR-2026-0825-1234</div>
+            <p style="font-size:13px; color:#6c757d; margin-top:5px;">Total Cost: <strong id="notifTotalCost">₱ 0.00</strong></p>
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="closeNotification(); resetForm();">📝 New PR</button>
+                <button class="btn" onclick="closeNotification()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ============================================
-        // UPDATE THIS URL WITH YOUR NEW DEPLOYMENT URL
+        // UPDATE THIS URL WITH YOUR DEPLOYMENT URL
         // ============================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3wAtqAUzIqqlqqt8SJtkNEgZGF-jFAAoGucINKHpNZiDVutCOTIws30gzmXVUvFcNGg/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfm2LjNN4HAsiMKx70YlusrajC8xqZQzYTlH-JhnQQyQ-JNiafIFxuMbahiuYLud3sOA/exec';
         
         let itemCount = 0;
         let isSubmitting = false;
 
-        // Set today's date
+        // ============================================
+        // STATUS TRACKER FUNCTIONS
+        // ============================================
+        const STEPS = [
+            { id: 'validate', label: 'Validating form data...', icon: '🔍' },
+            { id: 'prepare', label: 'Preparing data for submission...', icon: '📦' },
+            { id: 'connect', label: 'Connecting to Google Sheets...', icon: '🔗' },
+            { id: 'save', label: 'Saving to Google Sheets...', icon: '💾' },
+            { id: 'verify', label: 'Verifying save operation...', icon: '✅' }
+        ];
+
+        let stepStatus = {};
+        let startTime = null;
+
+        function initStatusTracker() {
+            const tracker = document.getElementById('statusTracker');
+            tracker.classList.add('visible');
+            const container = document.getElementById('progressSteps');
+            container.innerHTML = '';
+            stepStatus = {};
+            startTime = Date.now();
+
+            STEPS.forEach((step, index) => {
+                stepStatus[step.id] = 'pending';
+                const div = document.createElement('div');
+                div.className = 'step';
+                div.id = 'step-' + step.id;
+                div.innerHTML = `
+                    <span class="icon pending" id="icon-${step.id}">${step.icon}</span>
+                    <span class="step-label">${step.label}</span>
+                    <span class="step-status pending" id="status-${step.id}">Pending</span>
+                    <span class="step-time" id="time-${step.id}">--</span>
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById('statusBadge').textContent = 'Running...';
+            document.getElementById('statusBadge').className = 'badge running';
+        }
+
+        function updateStep(stepId, status, message) {
+            const step = STEPS.find(s => s.id === stepId);
+            if (!step) return;
+
+            const el = document.getElementById('step-' + stepId);
+            const icon = document.getElementById('icon-' + stepId);
+            const statusEl = document.getElementById('status-' + stepId);
+            const timeEl = document.getElementById('time-' + stepId);
+
+            // Remove old classes
+            el.className = 'step';
+            icon.className = 'icon';
+
+            const now = new Date();
+            const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+
+            switch(status) {
+                case 'active':
+                    el.classList.add('active-step');
+                    icon.classList.add('active');
+                    icon.textContent = '⏳';
+                    statusEl.textContent = message || 'Processing...';
+                    statusEl.className = 'step-status active';
+                    timeEl.textContent = elapsed + 's';
+                    break;
+                case 'done':
+                    el.classList.add('done-step');
+                    icon.classList.add('done');
+                    icon.textContent = '✅';
+                    statusEl.textContent = message || 'Done';
+                    statusEl.className = 'step-status done';
+                    timeEl.textContent = elapsed + 's';
+                    break;
+                case 'error':
+                    el.classList.add('error-step');
+                    icon.classList.add('error');
+                    icon.textContent = '❌';
+                    statusEl.textContent = message || 'Failed';
+                    statusEl.className = 'step-status error';
+                    timeEl.textContent = elapsed + 's';
+                    break;
+                default: // pending
+                    icon.classList.add('pending');
+                    icon.textContent = step.icon;
+                    statusEl.textContent = 'Pending';
+                    statusEl.className = 'step-status pending';
+                    timeEl.textContent = '--';
+            }
+
+            stepStatus[stepId] = status;
+        }
+
+        function setStepError(stepId, message) {
+            updateStep(stepId, 'error', message);
+            document.getElementById('statusBadge').textContent = 'Failed';
+            document.getElementById('statusBadge').className = 'badge error';
+        }
+
+        function setAllStepsDone() {
+            STEPS.forEach(step => {
+                if (stepStatus[step.id] !== 'error') {
+                    updateStep(step.id, 'done', 'Completed');
+                }
+            });
+            document.getElementById('statusBadge').textContent = 'Completed';
+            document.getElementById('statusBadge').className = 'badge done';
+        }
+
+        // ============================================
+        // NOTIFICATION FUNCTIONS
+        // ============================================
+        function showNotification(prNumber, totalCost) {
+            document.getElementById('notifPRNumber').textContent = prNumber;
+            document.getElementById('notifTotalCost').textContent = '₱ ' + totalCost.toFixed(2);
+            document.getElementById('notificationOverlay').classList.add('visible');
+        }
+
+        function closeNotification() {
+            document.getElementById('notificationOverlay').classList.remove('visible');
+        }
+
+        // ============================================
+        // FORM FUNCTIONS
+        // ============================================
         document.getElementById('prDate').value = new Date().toISOString().split('T')[0];
 
-        // Generate PR number
         function generatePRNumber() {
             const date = new Date();
             const year = date.getFullYear();
@@ -340,7 +726,6 @@
 
         document.getElementById('prNumber').value = generatePRNumber();
 
-        // Add item row
         function addItem(stockNo = '', unit = '', description = '', quantity = 1, unitCost = 0) {
             const container = document.getElementById('itemContainer');
             const row = document.createElement('div');
@@ -393,12 +778,15 @@
                 document.getElementById('totalCostDisplay').textContent = '0.00';
                 document.getElementById('statusMessage').className = 'status-message';
                 document.getElementById('statusMessage').style.display = 'none';
+                document.getElementById('statusTracker').classList.remove('visible');
+                document.getElementById('progressSteps').innerHTML = '';
                 addItem('', '', '', 1, 0);
                 addItem('', '', '', 1, 0);
                 const submitBtn = document.getElementById('submitBtn');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '💾 Save Purchase Request';
                 isSubmitting = false;
+                closeNotification();
             }
         }
 
@@ -410,113 +798,167 @@
             statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
+        // ============================================
+        // MAIN SUBMIT FUNCTION WITH STATUS TRACKING
+        // ============================================
         async function submitPR() {
             if (isSubmitting) return;
             
-            // Validate required fields
-            const required = ['entityName', 'officeSection', 'fundCluster', 'prDate', 'purpose', 'requesterName', 'requesterDesignation', 'approverName', 'approverDesignation'];
+            // Hide any previous status
+            document.getElementById('statusMessage').style.display = 'none';
             
-            for (let id of required) {
-                const field = document.getElementById(id);
-                if (!field.value.trim()) {
-                    showStatus(`Please fill in: ${field.previousElementSibling.textContent.trim()}`, 'error');
-                    field.focus();
-                    return;
-                }
-            }
-
-            // Validate items
-            const itemRows = document.querySelectorAll('.item-row');
-            let hasValidItem = false;
-            let itemData = [];
-            
-            itemRows.forEach(row => {
-                const description = row.querySelector('.description').value.trim();
-                const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
-                const unitCost = parseFloat(row.querySelector('.unit-cost').value) || 0;
-                
-                if (description && quantity > 0 && unitCost >= 0) {
-                    hasValidItem = true;
-                    itemData.push({
-                        stockNo: row.querySelector('.stock-no').value.trim(),
-                        unit: row.querySelector('.unit').value.trim(),
-                        description: description,
-                        quantity: quantity,
-                        unitCost: unitCost,
-                        totalCost: quantity * unitCost
-                    });
-                }
-            });
-
-            if (!hasValidItem) {
-                showStatus('Please add at least one valid item with description, quantity, and unit cost.', 'error');
-                return;
-            }
-
-            // Prepare data
-            const formData = {
-                prNumber: document.getElementById('prNumber').value,
-                entityName: document.getElementById('entityName').value.trim(),
-                officeSection: document.getElementById('officeSection').value.trim(),
-                fundCluster: document.getElementById('fundCluster').value.trim(),
-                rcCode: document.getElementById('rcCode').value.trim(),
-                prDate: document.getElementById('prDate').value,
-                purpose: document.getElementById('purpose').value.trim(),
-                items: itemData,
-                totalCost: parseFloat(document.getElementById('totalCostDisplay').textContent),
-                requesterSignature: document.getElementById('requesterSignature').value.trim(),
-                requesterName: document.getElementById('requesterName').value.trim(),
-                requesterDesignation: document.getElementById('requesterDesignation').value.trim(),
-                approverSignature: document.getElementById('approverSignature').value.trim(),
-                approverName: document.getElementById('approverName').value.trim(),
-                approverDesignation: document.getElementById('approverDesignation').value.trim(),
-                timestamp: new Date().toISOString()
-            };
-
-            // Disable submit button
-            isSubmitting = true;
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner"></span> Saving...';
-            showStatus('Saving your Purchase Request...', 'loading');
+            // Initialize status tracker
+            initStatusTracker();
 
             try {
+                // ---- STEP 1: Validate ----
+                updateStep('validate', 'active', 'Checking required fields...');
+                await sleep(300);
+
+                const required = ['entityName', 'officeSection', 'fundCluster', 'prDate', 'purpose', 'requesterName', 'requesterDesignation', 'approverName', 'approverDesignation'];
+                
+                for (let id of required) {
+                    const field = document.getElementById(id);
+                    if (!field.value.trim()) {
+                        updateStep('validate', 'error', 'Missing: ' + field.previousElementSibling.textContent.trim());
+                        setStepError('validate', 'Missing required field');
+                        showStatus(`Please fill in: ${field.previousElementSibling.textContent.trim()}`, 'error');
+                        field.focus();
+                        return;
+                    }
+                }
+                updateStep('validate', 'done', 'All required fields filled');
+
+                // ---- STEP 2: Prepare ----
+                updateStep('prepare', 'active', 'Processing items...');
+                await sleep(300);
+
+                const itemRows = document.querySelectorAll('.item-row');
+                let hasValidItem = false;
+                let itemData = [];
+                
+                itemRows.forEach(row => {
+                    const description = row.querySelector('.description').value.trim();
+                    const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+                    const unitCost = parseFloat(row.querySelector('.unit-cost').value) || 0;
+                    
+                    if (description && quantity > 0 && unitCost >= 0) {
+                        hasValidItem = true;
+                        itemData.push({
+                            stockNo: row.querySelector('.stock-no').value.trim(),
+                            unit: row.querySelector('.unit').value.trim(),
+                            description: description,
+                            quantity: quantity,
+                            unitCost: unitCost,
+                            totalCost: quantity * unitCost
+                        });
+                    }
+                });
+
+                if (!hasValidItem) {
+                    updateStep('prepare', 'error', 'No valid items found');
+                    setStepError('prepare', 'No valid items');
+                    showStatus('Please add at least one valid item with description, quantity, and unit cost.', 'error');
+                    return;
+                }
+                updateStep('prepare', 'done', itemData.length + ' items prepared');
+
+                // ---- STEP 3: Connect ----
+                updateStep('connect', 'active', 'Establishing connection...');
+                await sleep(300);
+
+                const prNumber = document.getElementById('prNumber').value;
+                const totalCost = parseFloat(document.getElementById('totalCostDisplay').textContent);
+
+                const formData = {
+                    prNumber: prNumber,
+                    entityName: document.getElementById('entityName').value.trim(),
+                    officeSection: document.getElementById('officeSection').value.trim(),
+                    fundCluster: document.getElementById('fundCluster').value.trim(),
+                    rcCode: document.getElementById('rcCode').value.trim(),
+                    prDate: document.getElementById('prDate').value,
+                    purpose: document.getElementById('purpose').value.trim(),
+                    items: itemData,
+                    totalCost: totalCost,
+                    requesterSignature: document.getElementById('requesterSignature').value.trim(),
+                    requesterName: document.getElementById('requesterName').value.trim(),
+                    requesterDesignation: document.getElementById('requesterDesignation').value.trim(),
+                    approverSignature: document.getElementById('approverSignature').value.trim(),
+                    approverName: document.getElementById('approverName').value.trim(),
+                    approverDesignation: document.getElementById('approverDesignation').value.trim(),
+                    timestamp: new Date().toISOString()
+                };
+
+                updateStep('connect', 'done', 'Connected to Google Sheets');
+
+                // ---- STEP 4: Save ----
+                updateStep('save', 'active', 'Sending data...');
+                await sleep(300);
+
+                // Disable submit button
+                isSubmitting = true;
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner"></span> Saving...';
+
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
 
                 const result = await response.json();
 
                 if (result.success) {
-                    showStatus('✅ Purchase Request successfully saved! PR Number: ' + result.prNumber, 'success');
+                    updateStep('save', 'done', 'Data saved successfully');
                     
-                    setTimeout(() => {
-                        if (confirm('Purchase Request saved successfully!\n\nPR Number: ' + result.prNumber + '\n\nWould you like to start a new one?')) {
-                            resetForm();
-                        }
-                    }, 500);
+                    // ---- STEP 5: Verify ----
+                    updateStep('verify', 'active', 'Verifying...');
+                    await sleep(300);
+                    updateStep('verify', 'done', 'Verified');
+
+                    setAllStepsDone();
+                    showStatus('✅ Purchase Request successfully saved!', 'success');
+
+                    // Show notification
+                    showNotification(prNumber, totalCost);
+
                 } else {
+                    updateStep('save', 'error', result.error || 'Save failed');
+                    setStepError('save', result.error || 'Unknown error');
                     showStatus('❌ Error: ' + (result.error || 'Unknown error'), 'error');
                 }
 
             } catch (error) {
-                showStatus('❌ Error saving PR: ' + error.message, 'error');
                 console.error('Error:', error);
+                showStatus('❌ Error: ' + error.message, 'error');
+                
+                // Mark current step as error
+                const activeStep = STEPS.find(s => stepStatus[s.id] === 'active');
+                if (activeStep) {
+                    setStepError(activeStep.id, error.message);
+                }
             }
 
             // Reset submit button
+            const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = false;
             submitBtn.innerHTML = '💾 Save Purchase Request';
             isSubmitting = false;
         }
 
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
         // Initialize with two empty rows
         addItem('', '', '', 1, 0);
         addItem('', '', '', 1, 0);
+
+        // Close notification on overlay click
+        document.getElementById('notificationOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeNotification();
+        });
     </script>
 </body>
 </html>
