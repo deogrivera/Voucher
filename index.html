@@ -34,7 +34,6 @@
             text-align: center;
         }
 
-        /* ---------- TABS ---------- */
         .tab-nav {
             display: flex;
             gap: 8px;
@@ -179,7 +178,6 @@
             color: #1a3c6e;
         }
 
-        /* Draft MS item row (Step 1): Item No / Qty / Unit / Description / Action */
         .ms-draft-row {
             display: grid;
             grid-template-columns: 70px 70px 90px 1fr 40px;
@@ -206,7 +204,6 @@
             color: #1a3c6e;
         }
 
-        /* Encode-quotes item row (Step 2): Item No / Qty / Unit / Description(readonly) / P1 / P2 / P3 / Avg */
         .ms-item-row {
             display: grid;
             grid-template-columns: 60px 60px 70px 1fr 90px 90px 90px 90px;
@@ -261,12 +258,27 @@
         .btn-accent:hover { background: #b85f04; }
         .btn-print { background: #17a2b8; }
         .btn-print:hover { background: #128294; }
+        .btn-test { background: #6f42c1; }
+        .btn-test:hover { background: #5a32a3; }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-small { padding: 6px 12px; font-size: 12px; }
 
         .button-group {
             margin-top: 20px;
             text-align: center;
+        }
+
+        .test-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px dashed #6f42c1;
+            border-radius: 8px;
+        }
+
+        .test-section h4 {
+            color: #6f42c1;
+            margin-bottom: 10px;
         }
 
         .status-tracker {
@@ -560,7 +572,6 @@
             vertical-align: middle;
         }
 
-        /* ---------- MS retrieval panel (inside PR tab) ---------- */
         .ms-lookup {
             background: #fff8ec;
             border: 1px dashed #d97706;
@@ -662,7 +673,6 @@
         .encode-header-summary.visible { display: block; }
         .encode-header-summary strong { color: #1a3c6e; }
 
-        /* ---------- PRINT AREA (hidden on screen, shown only when printing) ---------- */
         #printArea { display: none; }
 
         @media print {
@@ -855,7 +865,7 @@
                 <button type="button" class="subtab-btn" id="subtabBtn-encode" onclick="switchMSSubtab('encode')">📥 Step 2 — Encode Supplier Quotes</button>
             </div>
 
-            <!-- ---------- STEP 1: CREATE (no supplier data) ---------- -->
+            <!-- ---------- STEP 1: CREATE ---------- -->
             <div id="msSubview-create" class="subtab-view active">
                 <form id="msCreateForm">
                     <div class="form-section">
@@ -899,6 +909,22 @@
                         <button type="button" class="btn btn-accent" id="msCreateBtn" onclick="submitCreateSurvey()">💾 Save Market Survey</button>
                         <button type="button" class="btn btn-print" id="msPrintBtn" onclick="printCurrentDraft()" disabled title="Save the survey first, then print">🖨️ Print Form (3 copies)</button>
                         <button type="button" class="btn btn-danger" onclick="resetCreateForm()">🔄 Reset Form</button>
+                    </div>
+
+                    <!-- TEST SECTION -->
+                    <div class="test-section">
+                        <h4>🧪 API Test Section</h4>
+                        <p style="font-size:13px; color:#6c757d; margin-bottom:10px;">
+                            Use these buttons to test the connection to Google Apps Script.
+                            Check the browser console (F12) for detailed logs.
+                        </p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-test btn-small" onclick="testDirectAPI()">🔌 Test API Connection</button>
+                            <button type="button" class="btn btn-test btn-small" onclick="testListSurveys()">📋 Test List Surveys</button>
+                            <button type="button" class="btn btn-test btn-small" onclick="testGetSurvey()">🔍 Test Get Survey</button>
+                            <button type="button" class="btn btn-small" style="background:#6c757d;" onclick="console.clear(); alert('Console cleared!')">🗑️ Clear Console</button>
+                        </div>
+                        <div id="testResult" style="margin-top:10px; padding:10px; background:white; border-radius:4px; font-size:13px; display:none;"></div>
                     </div>
 
                     <div id="msCreateStatusTracker" class="status-tracker">
@@ -1023,7 +1049,180 @@
         // ============================================
         // CONFIGURATION - UPDATE WITH YOUR WEB APP URL
         // ============================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXIWWN-_I0TDGnfOPaw51v7zQb9Z-6ySFI5uT84lPo9Q5UWuTSHwHW6WgqC_R8-EYYPw/exec';
+        // IMPORTANT: 
+        // 1. Go to Apps Script → Deploy → Manage deployments
+        // 2. Copy the Web App URL (ends with /exec)
+        // 3. Paste it below
+        const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+
+        // ============================================
+        // TEST FUNCTIONS
+        // ============================================
+        function showTestResult(message, isSuccess) {
+            const div = document.getElementById('testResult');
+            div.style.display = 'block';
+            div.style.background = isSuccess ? '#d4edda' : '#f8d7da';
+            div.style.color = isSuccess ? '#155724' : '#721c24';
+            div.style.border = '1px solid ' + (isSuccess ? '#c3e6cb' : '#f5c6cb');
+            div.innerHTML = message;
+        }
+
+        async function testDirectAPI() {
+            console.log('=== TEST: Direct API Call ===');
+            console.log('SCRIPT_URL:', SCRIPT_URL);
+            
+            if (SCRIPT_URL.includes('YOUR_DEPLOYMENT_ID')) {
+                const msg = '❌ Please update SCRIPT_URL with your actual deployment URL!\n\nGo to Apps Script → Deploy → Manage deployments → Copy the Web App URL';
+                alert(msg);
+                showTestResult(msg.replace(/\n/g, '<br>'), false);
+                return;
+            }
+
+            try {
+                const testData = {
+                    action: 'createMarketSurvey',
+                    msNumber: 'MS-HTML-TEST-' + new Date().getTime(),
+                    dateAccomplished: new Date().toISOString().split('T')[0],
+                    endUser: 'HTML Test User',
+                    purpose: 'Testing from HTML',
+                    items: [
+                        {
+                            itemNo: '1',
+                            quantity: 5,
+                            unit: 'pcs',
+                            description: 'Test Item from HTML'
+                        }
+                    ],
+                    timestamp: new Date().toISOString()
+                };
+                
+                console.log('Sending data:', JSON.stringify(testData, null, 2));
+                
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData)
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response status text:', response.statusText);
+                
+                if (!response.ok) {
+                    throw new Error('HTTP error! status: ' + response.status + ' - ' + response.statusText);
+                }
+                
+                const result = await response.json();
+                console.log('Response data:', result);
+                
+                if (result.success) {
+                    const msg = '✅ Test successful!\n\nMS Number: ' + testData.msNumber + '\nItems added: ' + (result.itemsAdded || 0) + '\n\nCheck your Google Sheet!';
+                    alert(msg);
+                    showTestResult(msg.replace(/\n/g, '<br>'), true);
+                } else {
+                    const msg = '❌ Test failed: ' + (result.error || 'Unknown error');
+                    alert(msg);
+                    showTestResult(msg, false);
+                }
+                return result;
+                
+            } catch (error) {
+                console.error('Test failed:', error);
+                const msg = '❌ Error: ' + error.message + '\n\nCheck:\n1. SCRIPT_URL is correct\n2. Web App is deployed\n3. Access is set to "Anyone"';
+                alert(msg);
+                showTestResult(msg.replace(/\n/g, '<br>'), false);
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function testListSurveys() {
+            console.log('=== TEST: List Surveys ===');
+            console.log('SCRIPT_URL:', SCRIPT_URL);
+            
+            try {
+                const url = SCRIPT_URL + '?action=listSurveys';
+                console.log('Fetching:', url);
+                
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error('HTTP error! status: ' + response.status);
+                }
+                
+                const result = await response.json();
+                console.log('Response:', result);
+                
+                if (result.success) {
+                    const count = (result.surveys || []).length;
+                    const msg = '✅ Found ' + count + ' survey(s)\n\n' + 
+                        (count > 0 ? result.surveys.map(s => '• ' + s.msNumber + ' (' + s.status + ')').join('\n') : 'No surveys yet');
+                    alert(msg);
+                    showTestResult(msg.replace(/\n/g, '<br>'), true);
+                } else {
+                    const msg = '❌ Failed: ' + (result.error || 'Unknown error');
+                    alert(msg);
+                    showTestResult(msg, false);
+                }
+                return result;
+                
+            } catch (error) {
+                console.error('Test failed:', error);
+                const msg = '❌ Error: ' + error.message;
+                alert(msg);
+                showTestResult(msg, false);
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function testGetSurvey() {
+            console.log('=== TEST: Get Survey ===');
+            
+            // Get the MS number from the form or prompt
+            let msNumber = document.getElementById('msFormNumber')?.value;
+            if (!msNumber || msNumber === 'MS-YYYYMMDD-XXXX') {
+                msNumber = prompt('Enter the MS Number to look up:', 'MS-20260826-1234');
+                if (!msNumber) return;
+            }
+            
+            console.log('Looking up:', msNumber);
+            
+            try {
+                const url = SCRIPT_URL + '?action=getSurvey&msNumber=' + encodeURIComponent(msNumber);
+                console.log('Fetching:', url);
+                
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error('HTTP error! status: ' + response.status);
+                }
+                
+                const result = await response.json();
+                console.log('Response:', result);
+                
+                if (result.success) {
+                    const msg = '✅ Survey found!\n\n' +
+                        'MS Number: ' + result.msNumber + '\n' +
+                        'Status: ' + result.status + '\n' +
+                        'End User: ' + result.endUser + '\n' +
+                        'Items: ' + (result.items || []).length + ' item(s)';
+                    alert(msg);
+                    showTestResult(msg.replace(/\n/g, '<br>'), true);
+                } else {
+                    const msg = '❌ Survey not found: ' + (result.error || 'Unknown error');
+                    alert(msg);
+                    showTestResult(msg, false);
+                }
+                return result;
+                
+            } catch (error) {
+                console.error('Test failed:', error);
+                const msg = '❌ Error: ' + error.message;
+                alert(msg);
+                showTestResult(msg, false);
+                return { success: false, error: error.message };
+            }
+        }
 
         // ============================================
         // TABS
@@ -1164,7 +1363,7 @@
         }
 
         // ============================================
-        // NOTIFICATION (shared)
+        // NOTIFICATION
         // ============================================
         function showNotification(title, subtitle, refNumber, extraLineHtml, btnGroupHtml) {
             document.getElementById('notifTitle').textContent = title;
@@ -1296,8 +1495,15 @@
         async function fetchAndApplySurvey(msNumber) {
             showMSLoadStatus('Searching for ' + msNumber + ' ...', '');
             try {
-                const res = await fetch(SCRIPT_URL + '?action=getSurvey&msNumber=' + encodeURIComponent(msNumber));
+                const url = SCRIPT_URL + '?action=getSurvey&msNumber=' + encodeURIComponent(msNumber);
+                console.log('Fetching:', url);
+                
+                const res = await fetch(url);
+                if (!res.ok) {
+                    throw new Error('HTTP error! status: ' + res.status);
+                }
                 const data = await res.json();
+                console.log('Response:', data);
 
                 if (!data.success) {
                     showMSLoadStatus('❌ ' + (data.error || 'Market Survey not found'), 'error');
@@ -1326,6 +1532,7 @@
                 document.getElementById('msSearchInput').value = data.msNumber;
 
             } catch (err) {
+                console.error('Error:', err);
                 showMSLoadStatus('❌ ' + err.message, 'error');
             }
         }
@@ -1524,7 +1731,7 @@
         }
 
         // ============================================
-        // MARKET SURVEY - STEP 1: CREATE (draft, no suppliers)
+        // MARKET SURVEY - STEP 1: CREATE
         // ============================================
         document.getElementById('msDate').value = new Date().toISOString().split('T')[0];
 
@@ -1540,7 +1747,7 @@
         document.getElementById('msFormNumber').value = generateMSNumber();
 
         let msDraftItemCount = 0;
-        let lastCreatedSurvey = null; // cached data of the last saved draft, for printing
+        let lastCreatedSurvey = null;
 
         function getDraftItemRows() {
             return document.querySelectorAll('#msDraftItemContainer .ms-draft-row');
@@ -1590,6 +1797,7 @@
                 document.getElementById('msPrintBtn').disabled = true;
                 lastCreatedSurvey = null;
                 closeNotification();
+                document.getElementById('testResult').style.display = 'none';
             }
         }
 
@@ -1733,12 +1941,24 @@
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span class="spinner"></span> Saving...';
 
+                console.log('=== SENDING SURVEY DATA ===');
+                console.log('URL:', SCRIPT_URL);
+                console.log('Data:', JSON.stringify(formData, null, 2));
+
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
+
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error('HTTP error! status: ' + response.status + ' - ' + response.statusText);
+                }
+
                 const result = await response.json();
+                console.log('Response:', result);
 
                 if (result.success) {
                     updateMCStep('mc-save', 'done', 'Saved');
@@ -1749,7 +1969,13 @@
 
                     showMCStatus('✅ Market Survey created! You can now print it and hand it to your 3 suppliers.', 'success');
 
-                    lastCreatedSurvey = { msNumber, dateAccomplished: msDate, endUser: msEndUser, purpose: msPurpose, items };
+                    lastCreatedSurvey = { 
+                        msNumber: msNumber, 
+                        dateAccomplished: msDate, 
+                        endUser: msEndUser, 
+                        purpose: msPurpose, 
+                        items: items 
+                    };
                     document.getElementById('msPrintBtn').disabled = false;
 
                     showNotification(
@@ -1762,9 +1988,11 @@
                     );
 
                 } else {
-                    updateMCStep('mc-save', 'error', result.error || 'Save failed');
-                    setMCError('mc-save', result.error || 'Unknown error');
-                    showMCStatus('❌ Error: ' + (result.error || 'Unknown error'), 'error');
+                    const errorMsg = result.error || 'Unknown error';
+                    console.error('Server error:', errorMsg);
+                    updateMCStep('mc-save', 'error', errorMsg);
+                    setMCError('mc-save', errorMsg);
+                    showMCStatus('❌ Error: ' + errorMsg, 'error');
                 }
 
             } catch (error) {
@@ -1780,7 +2008,7 @@
         }
 
         // ============================================
-        // PRINT: Market Survey blank form (3 copies)
+        // PRINT: Market Survey
         // ============================================
         const MS_INTRO_TEXT = "In determining the technical specifications of the goods it will procure, the PMO or end-user or implementing unit must consider the objectives of the project or the procurement at hand, and identify the standards that should be met by the goods in terms of function, performance, environmental interface and/or design. It must also conduct a market survey that will include a study of the available products or services, industry developments or standards, product or service standards specified by the authorized government entity like the Bureau of Product Standards, ISO9000 or similar local or international bodies. As a rule, Philippine standards, as specified by the Bureau of Product Standards, must be followed. For products where there are no specified Philippine standards, the standards of the country of origin or other international body may be considered. Product brochures, technical publications, industry newsletters, the industry itself, as well as the Internet, are good sources of product information. The conduct of a comparative study of the options available in the market and their relevance to the requirements of the Project is highly recommended. As such, please quote your best offer for the item/s listed below to determine the availability of the goods and cost or market price of the product to come up with a \"fair criteria\".";
 
@@ -1889,8 +2117,15 @@
         async function fetchAndApplyForEncode(msNumber) {
             showEncodeLoadStatus('Searching for ' + msNumber + ' ...', '');
             try {
-                const res = await fetch(SCRIPT_URL + '?action=getSurvey&msNumber=' + encodeURIComponent(msNumber));
+                const url = SCRIPT_URL + '?action=getSurvey&msNumber=' + encodeURIComponent(msNumber);
+                console.log('Fetching:', url);
+                
+                const res = await fetch(url);
+                if (!res.ok) {
+                    throw new Error('HTTP error! status: ' + res.status);
+                }
                 const data = await res.json();
+                console.log('Response:', data);
 
                 if (!data.success) {
                     showEncodeLoadStatus('❌ ' + (data.error || 'Market Survey not found'), 'error');
@@ -1909,7 +2144,6 @@
                 `;
                 summary.classList.add('visible');
 
-                // populate item rows (readonly desc/qty/unit) with existing prices (0 if not yet quoted)
                 const container = document.getElementById('msEncodeItemContainer');
                 container.innerHTML = '';
                 data.items.forEach(it => {
@@ -1928,7 +2162,6 @@
                     container.appendChild(row);
                 });
 
-                // pre-fill supplier blocks if already quoted before (editable, in case of correction)
                 const suppliers = data.suppliers || [{}, {}, {}];
                 ['1', '2', '3'].forEach((n, idx) => {
                     const s = suppliers[idx] || {};
@@ -1948,6 +2181,7 @@
                 document.getElementById('encodeSearchInput').value = data.msNumber;
 
             } catch (err) {
+                console.error('Error:', err);
                 showEncodeLoadStatus('❌ ' + err.message, 'error');
             }
         }
@@ -2205,6 +2439,14 @@
         document.getElementById('notificationOverlay').addEventListener('click', function(e) {
             if (e.target === this) closeNotification();
         });
+
+        // Show a warning if SCRIPT_URL hasn't been updated
+        if (SCRIPT_URL.includes('YOUR_DEPLOYMENT_ID')) {
+            console.warn('⚠️ Please update SCRIPT_URL with your actual Web App URL!');
+            console.warn('Go to Apps Script → Deploy → Manage deployments → Copy the Web App URL');
+        } else {
+            console.log('✅ SCRIPT_URL is set to:', SCRIPT_URL);
+        }
     </script>
 </body>
 </html>
