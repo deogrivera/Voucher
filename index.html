@@ -268,17 +268,54 @@
             text-align: center;
         }
 
+        /* Test Section Styles */
         .test-section {
-            margin-top: 15px;
-            padding: 15px;
+            margin-top: 20px;
+            padding: 20px;
             background: #f8f9fa;
-            border: 1px dashed #6f42c1;
+            border: 2px dashed #6f42c1;
             border-radius: 8px;
+            display: block !important;
         }
 
         .test-section h4 {
             color: #6f42c1;
             margin-bottom: 10px;
+        }
+
+        .test-section p {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .test-button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .test-result {
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .test-result.success {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .test-result.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
         .status-tracker {
@@ -911,20 +948,20 @@
                         <button type="button" class="btn btn-danger" onclick="resetCreateForm()">🔄 Reset Form</button>
                     </div>
 
-                    <!-- TEST SECTION -->
+                    <!-- TEST SECTION - VISIBLE NOW -->
                     <div class="test-section">
                         <h4>🧪 API Test Section</h4>
-                        <p style="font-size:13px; color:#6c757d; margin-bottom:10px;">
+                        <p>
                             Use these buttons to test the connection to Google Apps Script.
                             Check the browser console (F12) for detailed logs.
                         </p>
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button type="button" class="btn btn-test btn-small" onclick="testDirectAPI()">🔌 Test API Connection</button>
-                            <button type="button" class="btn btn-test btn-small" onclick="testListSurveys()">📋 Test List Surveys</button>
-                            <button type="button" class="btn btn-test btn-small" onclick="testGetSurvey()">🔍 Test Get Survey</button>
-                            <button type="button" class="btn btn-small" style="background:#6c757d;" onclick="console.clear(); alert('Console cleared!')">🗑️ Clear Console</button>
+                        <div class="test-button-group">
+                            <button type="button" class="btn btn-test" onclick="testDirectAPI()">🔌 Test API Connection</button>
+                            <button type="button" class="btn btn-test" onclick="testListSurveys()">📋 Test List Surveys</button>
+                            <button type="button" class="btn btn-test" onclick="testGetSurvey()">🔍 Test Get Survey</button>
+                            <button type="button" class="btn btn-small" style="background:#6c757d; color:white;" onclick="console.clear(); alert('Console cleared!')">🗑️ Clear Console</button>
                         </div>
-                        <div id="testResult" style="margin-top:10px; padding:10px; background:white; border-radius:4px; font-size:13px; display:none;"></div>
+                        <div id="testResult" class="test-result"></div>
                     </div>
 
                     <div id="msCreateStatusTracker" class="status-tracker">
@@ -1060,11 +1097,14 @@
         // ============================================
         function showTestResult(message, isSuccess) {
             const div = document.getElementById('testResult');
+            div.className = 'test-result';
+            div.innerHTML = message.replace(/\n/g, '<br>');
+            if (isSuccess) {
+                div.classList.add('success');
+            } else {
+                div.classList.add('error');
+            }
             div.style.display = 'block';
-            div.style.background = isSuccess ? '#d4edda' : '#f8d7da';
-            div.style.color = isSuccess ? '#155724' : '#721c24';
-            div.style.border = '1px solid ' + (isSuccess ? '#c3e6cb' : '#f5c6cb');
-            div.innerHTML = message;
         }
 
         async function testDirectAPI() {
@@ -1074,7 +1114,7 @@
             if (SCRIPT_URL.includes('YOUR_DEPLOYMENT_ID')) {
                 const msg = '❌ Please update SCRIPT_URL with your actual deployment URL!\n\nGo to Apps Script → Deploy → Manage deployments → Copy the Web App URL';
                 alert(msg);
-                showTestResult(msg.replace(/\n/g, '<br>'), false);
+                showTestResult(msg, false);
                 return;
             }
 
@@ -1117,7 +1157,7 @@
                 if (result.success) {
                     const msg = '✅ Test successful!\n\nMS Number: ' + testData.msNumber + '\nItems added: ' + (result.itemsAdded || 0) + '\n\nCheck your Google Sheet!';
                     alert(msg);
-                    showTestResult(msg.replace(/\n/g, '<br>'), true);
+                    showTestResult(msg, true);
                 } else {
                     const msg = '❌ Test failed: ' + (result.error || 'Unknown error');
                     alert(msg);
@@ -1129,7 +1169,7 @@
                 console.error('Test failed:', error);
                 const msg = '❌ Error: ' + error.message + '\n\nCheck:\n1. SCRIPT_URL is correct\n2. Web App is deployed\n3. Access is set to "Anyone"';
                 alert(msg);
-                showTestResult(msg.replace(/\n/g, '<br>'), false);
+                showTestResult(msg, false);
                 return { success: false, error: error.message };
             }
         }
@@ -1157,7 +1197,7 @@
                     const msg = '✅ Found ' + count + ' survey(s)\n\n' + 
                         (count > 0 ? result.surveys.map(s => '• ' + s.msNumber + ' (' + s.status + ')').join('\n') : 'No surveys yet');
                     alert(msg);
-                    showTestResult(msg.replace(/\n/g, '<br>'), true);
+                    showTestResult(msg, true);
                 } else {
                     const msg = '❌ Failed: ' + (result.error || 'Unknown error');
                     alert(msg);
@@ -1177,7 +1217,6 @@
         async function testGetSurvey() {
             console.log('=== TEST: Get Survey ===');
             
-            // Get the MS number from the form or prompt
             let msNumber = document.getElementById('msFormNumber')?.value;
             if (!msNumber || msNumber === 'MS-YYYYMMDD-XXXX') {
                 msNumber = prompt('Enter the MS Number to look up:', 'MS-20260826-1234');
@@ -1207,7 +1246,7 @@
                         'End User: ' + result.endUser + '\n' +
                         'Items: ' + (result.items || []).length + ' item(s)';
                     alert(msg);
-                    showTestResult(msg.replace(/\n/g, '<br>'), true);
+                    showTestResult(msg, true);
                 } else {
                     const msg = '❌ Survey not found: ' + (result.error || 'Unknown error');
                     alert(msg);
@@ -1797,6 +1836,7 @@
                 document.getElementById('msPrintBtn').disabled = true;
                 lastCreatedSurvey = null;
                 closeNotification();
+                document.getElementById('testResult').className = 'test-result';
                 document.getElementById('testResult').style.display = 'none';
             }
         }
