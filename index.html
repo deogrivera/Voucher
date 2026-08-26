@@ -67,6 +67,33 @@
         .tab-view { display: none; }
         .tab-view.active { display: block; }
 
+        .subtab-nav {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .subtab-btn {
+            flex: 1;
+            padding: 10px;
+            background: #fff;
+            border: 2px solid #d97706;
+            color: #d97706;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .subtab-btn.active {
+            background: #d97706;
+            color: white;
+        }
+
+        .subtab-view { display: none; }
+        .subtab-view.active { display: block; }
+
         .form-section {
             border: 1px solid #dde1e6;
             padding: 20px;
@@ -152,10 +179,37 @@
             color: #1a3c6e;
         }
 
-        /* Market survey item row: Item No / Qty / Unit / Description / P1 / P2 / P3 / Avg / Action */
+        /* Draft MS item row (Step 1): Item No / Qty / Unit / Description / Action */
+        .ms-draft-row {
+            display: grid;
+            grid-template-columns: 70px 70px 90px 1fr 40px;
+            gap: 6px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .ms-draft-row input {
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            width: 100%;
+        }
+
+        .ms-draft-row .header {
+            font-weight: 700;
+            background: #e9ecef;
+            padding: 8px 4px;
+            text-align: center;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #1a3c6e;
+        }
+
+        /* Encode-quotes item row (Step 2): Item No / Qty / Unit / Description(readonly) / P1 / P2 / P3 / Avg */
         .ms-item-row {
             display: grid;
-            grid-template-columns: 70px 70px 80px 1fr 100px 100px 100px 100px 40px;
+            grid-template-columns: 60px 60px 70px 1fr 90px 90px 90px 90px;
             gap: 6px;
             margin-bottom: 8px;
             align-items: center;
@@ -205,6 +259,8 @@
         .btn-danger:hover { background: #c82333; }
         .btn-accent { background: #d97706; }
         .btn-accent:hover { background: #b85f04; }
+        .btn-print { background: #17a2b8; }
+        .btn-print:hover { background: #128294; }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-small { padding: 6px 12px; font-size: 12px; }
 
@@ -569,6 +625,18 @@
             margin-top: 2px;
         }
 
+        .status-pill {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 6px;
+        }
+
+        .status-pill.pending { background: #fff3cd; color: #856404; }
+        .status-pill.quoted { background: #d4edda; color: #155724; }
+
         .ms-load-status {
             margin-top: 10px;
             font-size: 13px;
@@ -579,6 +647,50 @@
 
         .ms-load-status.success { display: block; background: #d4edda; color: #155724; }
         .ms-load-status.error { display: block; background: #f8d7da; color: #721c24; }
+        .ms-load-status.warning { display: block; background: #fff3cd; color: #856404; }
+
+        .encode-header-summary {
+            background: #eef2f7;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #333;
+            display: none;
+        }
+
+        .encode-header-summary.visible { display: block; }
+        .encode-header-summary strong { color: #1a3c6e; }
+
+        /* ---------- PRINT AREA (hidden on screen, shown only when printing) ---------- */
+        #printArea { display: none; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea {
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+            .print-copy { page-break-after: always; padding: 25px; font-family: 'Times New Roman', Times, serif; }
+            .print-copy:last-child { page-break-after: auto; }
+            .print-title { text-align: center; font-size: 18px; font-weight: bold; letter-spacing: 1px; margin-bottom: 14px; }
+            .print-copy-label { text-align: right; font-size: 11px; color: #555; margin-bottom: 10px; }
+            .print-intro { font-size: 12px; text-align: justify; margin-bottom: 14px; line-height: 1.5; }
+            .print-meta { font-size: 12px; margin-bottom: 4px; }
+            .print-meta strong { display: inline-block; width: 160px; }
+            .print-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 11px; }
+            .print-table th, .print-table td { border: 1px solid #000; padding: 5px; }
+            .print-table th { background: #eee; text-align: center; }
+            .print-footer { margin-top: 30px; font-size: 12px; }
+            .print-footer .sig-line { border-bottom: 1px solid #000; height: 26px; margin-bottom: 2px; }
+            .print-footer .field-row { display: flex; margin-top: 10px; }
+            .print-footer .field-row label { width: 200px; font-weight: bold; }
+            .print-footer .field-row .fill-line { flex: 1; border-bottom: 1px solid #000; }
+        }
 
         @media (max-width: 768px) {
             .form-group label {
@@ -590,10 +702,10 @@
                 gap: 5px;
             }
             .item-row .header { display: none; }
-            .ms-item-row {
+            .ms-draft-row, .ms-item-row {
                 grid-template-columns: 1fr 1fr;
             }
-            .ms-item-row .header { display: none; }
+            .ms-draft-row .header, .ms-item-row .header { display: none; }
             .container { padding: 15px; }
             .notification-box { padding: 25px; }
             .tab-btn { font-size: 13px; padding: 12px 6px; }
@@ -616,7 +728,7 @@
             <form id="prForm">
 
                 <div class="ms-lookup">
-                    <h4>🔎 Load items from a saved Market Survey (optional)</h4>
+                    <h4>🔎 Load items from a quoted Market Survey (optional)</h4>
                     <div class="ms-lookup-row">
                         <input type="text" id="msSearchInput" placeholder="e.g., MS-20260826-1234">
                         <button type="button" class="btn btn-accent btn-small" onclick="loadSurveyByNumber()">Load</button>
@@ -737,99 +849,157 @@
         <!-- MARKET SURVEY TAB                                  -->
         <!-- ================================================= -->
         <div id="view-ms" class="tab-view">
-            <form id="msForm">
-                <div class="form-section">
-                    <h3>Market Survey Details</h3>
-                    <div class="form-group">
-                        <label for="msFormNumber">MS No.:</label>
-                        <input type="text" id="msFormNumber" readonly style="background: #e9ecef;">
-                    </div>
-                    <div class="form-group">
-                        <label for="msDate">Date Accomplished:</label>
-                        <input type="date" id="msDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="msEndUser">End-User/Focal Person:</label>
-                        <input type="text" id="msEndUser" placeholder="e.g., GSS - Motorpool" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="msPurpose">Purpose/Requirement:</label>
-                        <textarea id="msPurpose" placeholder="What is being surveyed / procured..." required></textarea>
-                    </div>
-                </div>
 
-                <div class="form-section">
-                    <h3>Items &amp; Canvassed Prices (3 suppliers)</h3>
-                    <div class="items-section">
-                        <div class="ms-item-row header">
-                            <span>Item No.</span>
-                            <span>Qty</span>
-                            <span>Unit</span>
-                            <span>Item Description</span>
-                            <span>Supplier 1 ₱</span>
-                            <span>Supplier 2 ₱</span>
-                            <span>Supplier 3 ₱</span>
-                            <span>Average ₱</span>
-                            <span></span>
+            <div class="subtab-nav">
+                <button type="button" class="subtab-btn active" id="subtabBtn-create" onclick="switchMSSubtab('create')">📝 Step 1 — Create Survey</button>
+                <button type="button" class="subtab-btn" id="subtabBtn-encode" onclick="switchMSSubtab('encode')">📥 Step 2 — Encode Supplier Quotes</button>
+            </div>
+
+            <!-- ---------- STEP 1: CREATE (no supplier data) ---------- -->
+            <div id="msSubview-create" class="subtab-view active">
+                <form id="msCreateForm">
+                    <div class="form-section">
+                        <h3>Market Survey Details</h3>
+                        <div class="form-group">
+                            <label for="msFormNumber">MS No.:</label>
+                            <input type="text" id="msFormNumber" readonly style="background: #e9ecef;">
                         </div>
-                        <div id="msItemContainer"></div>
-                        <button type="button" class="btn btn-success" onclick="addMSItemRow()" style="margin-top:10px; font-size:13px; padding:8px 15px;">
-                            + Add Item
-                        </button>
+                        <div class="form-group">
+                            <label for="msDate">Date Accomplished:</label>
+                            <input type="date" id="msDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="msEndUser">End-User/Focal Person:</label>
+                            <input type="text" id="msEndUser" placeholder="e.g., GSS - Motorpool" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="msPurpose">Purpose/Requirement:</label>
+                            <textarea id="msPurpose" placeholder="What is being surveyed / procured..." required></textarea>
+                        </div>
                     </div>
+
+                    <div class="form-section">
+                        <h3>Items</h3>
+                        <div class="items-section">
+                            <div class="ms-draft-row header">
+                                <span>Item No.</span>
+                                <span>Qty</span>
+                                <span>Unit</span>
+                                <span>Item Description</span>
+                                <span></span>
+                            </div>
+                            <div id="msDraftItemContainer"></div>
+                            <button type="button" class="btn btn-success" onclick="addDraftItemRow()" style="margin-top:10px; font-size:13px; padding:8px 15px;">
+                                + Add Item
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn btn-accent" id="msCreateBtn" onclick="submitCreateSurvey()">💾 Save Market Survey</button>
+                        <button type="button" class="btn btn-print" id="msPrintBtn" onclick="printCurrentDraft()" disabled title="Save the survey first, then print">🖨️ Print Form (3 copies)</button>
+                        <button type="button" class="btn btn-danger" onclick="resetCreateForm()">🔄 Reset Form</button>
+                    </div>
+
+                    <div id="msCreateStatusTracker" class="status-tracker">
+                        <h4>
+                            ⏳ Processing Status
+                            <span id="msCreateStatusBadge" class="badge">Starting...</span>
+                        </h4>
+                        <div id="msCreateProgressSteps" class="progress-steps"></div>
+                    </div>
+
+                    <div id="msCreateStatusMessage" class="status-message"></div>
+                </form>
+            </div>
+
+            <!-- ---------- STEP 2: ENCODE QUOTES ---------- -->
+            <div id="msSubview-encode" class="subtab-view">
+                <div class="ms-lookup">
+                    <h4>📥 Load a Market Survey to encode its 3 returned quotes</h4>
+                    <div class="ms-lookup-row">
+                        <input type="text" id="encodeSearchInput" placeholder="e.g., MS-20260826-1234">
+                        <button type="button" class="btn btn-accent btn-small" onclick="loadDraftForEncode()">Load</button>
+                        <button type="button" class="btn btn-small" style="background:#6c757d;" onclick="toggleBrowseSurveysEncode()">📂 Browse Recent</button>
+                    </div>
+                    <div id="encodeBrowseList" class="ms-browse-list"></div>
+                    <div id="encodeLoadStatus" class="ms-load-status"></div>
                 </div>
 
-                <div class="form-section supplier-block">
-                    <h3>Supplier 1</h3>
-                    <div class="form-group"><label>Company Name:</label><input type="text" id="s1Name" required></div>
-                    <div class="form-group"><label>Business Address:</label><input type="text" id="s1Address"></div>
-                    <div class="form-group"><label>PhilGEPS Reg. No.:</label><input type="text" id="s1Philgeps"></div>
-                    <div class="form-group"><label>TIN:</label><input type="text" id="s1Tin"></div>
-                    <div class="form-group"><label>Telephone:</label><input type="text" id="s1Contact"></div>
-                    <div class="form-group"><label>Email:</label><input type="email" id="s1Email"></div>
-                    <div class="form-group"><label>Signatory Name:</label><input type="text" id="s1Signatory"></div>
-                    <div class="form-group"><label>Designation:</label><input type="text" id="s1Designation"></div>
-                </div>
+                <div id="encodeHeaderSummary" class="encode-header-summary"></div>
 
-                <div class="form-section supplier-block">
-                    <h3>Supplier 2</h3>
-                    <div class="form-group"><label>Company Name:</label><input type="text" id="s2Name" required></div>
-                    <div class="form-group"><label>Business Address:</label><input type="text" id="s2Address"></div>
-                    <div class="form-group"><label>PhilGEPS Reg. No.:</label><input type="text" id="s2Philgeps"></div>
-                    <div class="form-group"><label>TIN:</label><input type="text" id="s2Tin"></div>
-                    <div class="form-group"><label>Telephone:</label><input type="text" id="s2Contact"></div>
-                    <div class="form-group"><label>Email:</label><input type="email" id="s2Email"></div>
-                    <div class="form-group"><label>Signatory Name:</label><input type="text" id="s2Signatory"></div>
-                    <div class="form-group"><label>Designation:</label><input type="text" id="s2Designation"></div>
-                </div>
+                <form id="msEncodeForm" style="display:none;">
+                <div id="msEncodeFormInner">
+                    <div class="form-section">
+                        <h3>Items &amp; Canvassed Prices (3 suppliers)</h3>
+                        <div class="items-section">
+                            <div class="ms-item-row header">
+                                <span>Item No.</span>
+                                <span>Qty</span>
+                                <span>Unit</span>
+                                <span>Item Description</span>
+                                <span>Supplier 1 ₱</span>
+                                <span>Supplier 2 ₱</span>
+                                <span>Supplier 3 ₱</span>
+                                <span>Average ₱</span>
+                            </div>
+                            <div id="msEncodeItemContainer"></div>
+                        </div>
+                    </div>
 
-                <div class="form-section supplier-block">
-                    <h3>Supplier 3</h3>
-                    <div class="form-group"><label>Company Name:</label><input type="text" id="s3Name" required></div>
-                    <div class="form-group"><label>Business Address:</label><input type="text" id="s3Address"></div>
-                    <div class="form-group"><label>PhilGEPS Reg. No.:</label><input type="text" id="s3Philgeps"></div>
-                    <div class="form-group"><label>TIN:</label><input type="text" id="s3Tin"></div>
-                    <div class="form-group"><label>Telephone:</label><input type="text" id="s3Contact"></div>
-                    <div class="form-group"><label>Email:</label><input type="email" id="s3Email"></div>
-                    <div class="form-group"><label>Signatory Name:</label><input type="text" id="s3Signatory"></div>
-                    <div class="form-group"><label>Designation:</label><input type="text" id="s3Designation"></div>
-                </div>
+                    <div class="form-section supplier-block">
+                        <h3>Supplier 1</h3>
+                        <div class="form-group"><label>Company Name:</label><input type="text" id="s1Name" required></div>
+                        <div class="form-group"><label>Business Address:</label><input type="text" id="s1Address"></div>
+                        <div class="form-group"><label>PhilGEPS Reg. No.:</label><input type="text" id="s1Philgeps"></div>
+                        <div class="form-group"><label>TIN:</label><input type="text" id="s1Tin"></div>
+                        <div class="form-group"><label>Telephone:</label><input type="text" id="s1Contact"></div>
+                        <div class="form-group"><label>Email:</label><input type="email" id="s1Email"></div>
+                        <div class="form-group"><label>Signatory Name:</label><input type="text" id="s1Signatory"></div>
+                        <div class="form-group"><label>Designation:</label><input type="text" id="s1Designation"></div>
+                    </div>
 
-                <div class="button-group">
-                    <button type="button" class="btn btn-accent" id="msSubmitBtn" onclick="submitMarketSurvey()">💾 Save Market Survey</button>
-                    <button type="button" class="btn btn-danger" onclick="resetMSForm()">🔄 Reset Form</button>
-                </div>
+                    <div class="form-section supplier-block">
+                        <h3>Supplier 2</h3>
+                        <div class="form-group"><label>Company Name:</label><input type="text" id="s2Name" required></div>
+                        <div class="form-group"><label>Business Address:</label><input type="text" id="s2Address"></div>
+                        <div class="form-group"><label>PhilGEPS Reg. No.:</label><input type="text" id="s2Philgeps"></div>
+                        <div class="form-group"><label>TIN:</label><input type="text" id="s2Tin"></div>
+                        <div class="form-group"><label>Telephone:</label><input type="text" id="s2Contact"></div>
+                        <div class="form-group"><label>Email:</label><input type="email" id="s2Email"></div>
+                        <div class="form-group"><label>Signatory Name:</label><input type="text" id="s2Signatory"></div>
+                        <div class="form-group"><label>Designation:</label><input type="text" id="s2Designation"></div>
+                    </div>
 
-                <div id="msStatusTracker" class="status-tracker">
-                    <h4>
-                        ⏳ Processing Status
-                        <span id="msStatusBadge" class="badge">Starting...</span>
-                    </h4>
-                    <div id="msProgressSteps" class="progress-steps"></div>
-                </div>
+                    <div class="form-section supplier-block">
+                        <h3>Supplier 3</h3>
+                        <div class="form-group"><label>Company Name:</label><input type="text" id="s3Name" required></div>
+                        <div class="form-group"><label>Business Address:</label><input type="text" id="s3Address"></div>
+                        <div class="form-group"><label>PhilGEPS Reg. No.:</label><input type="text" id="s3Philgeps"></div>
+                        <div class="form-group"><label>TIN:</label><input type="text" id="s3Tin"></div>
+                        <div class="form-group"><label>Telephone:</label><input type="text" id="s3Contact"></div>
+                        <div class="form-group"><label>Email:</label><input type="email" id="s3Email"></div>
+                        <div class="form-group"><label>Signatory Name:</label><input type="text" id="s3Signatory"></div>
+                        <div class="form-group"><label>Designation:</label><input type="text" id="s3Designation"></div>
+                    </div>
 
-                <div id="msStatusMessage" class="status-message"></div>
-            </form>
+                    <div class="button-group">
+                        <button type="button" class="btn btn-accent" id="msEncodeBtn" onclick="submitEncodeQuotes()">💾 Save Supplier Quotes</button>
+                    </div>
+
+                    <div id="msEncodeStatusTracker" class="status-tracker">
+                        <h4>
+                            ⏳ Processing Status
+                            <span id="msEncodeStatusBadge" class="badge">Starting...</span>
+                        </h4>
+                        <div id="msEncodeProgressSteps" class="progress-steps"></div>
+                    </div>
+
+                    <div id="msEncodeStatusMessage" class="status-message"></div>
+                </div>
+                </form>
+            </div>
+
         </div>
     </div>
 
@@ -847,6 +1017,8 @@
         </div>
     </div>
 
+    <div id="printArea"></div>
+
     <script>
         // ============================================
         // CONFIGURATION - UPDATE WITH YOUR WEB APP URL
@@ -863,8 +1035,21 @@
             document.getElementById('tabBtn-ms').classList.toggle('active', tab === 'ms');
         }
 
+        function switchMSSubtab(sub) {
+            document.getElementById('msSubview-create').classList.toggle('active', sub === 'create');
+            document.getElementById('msSubview-encode').classList.toggle('active', sub === 'encode');
+            document.getElementById('subtabBtn-create').classList.toggle('active', sub === 'create');
+            document.getElementById('subtabBtn-encode').classList.toggle('active', sub === 'encode');
+        }
+
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str == null ? '' : String(str);
+            return div.innerHTML;
         }
 
         // ============================================
@@ -979,18 +1164,14 @@
         }
 
         // ============================================
-        // NOTIFICATION (shared by PR + MS)
+        // NOTIFICATION (shared)
         // ============================================
-        function showNotification(title, subtitle, refNumber, extraLineHtml, showNewPrBtn) {
+        function showNotification(title, subtitle, refNumber, extraLineHtml, btnGroupHtml) {
             document.getElementById('notifTitle').textContent = title;
             document.getElementById('notifSubtitle').textContent = subtitle;
             document.getElementById('notifPRNumber').textContent = refNumber;
             document.getElementById('notifExtraLine').innerHTML = extraLineHtml || '';
-            document.getElementById('notifBtnGroup').innerHTML = showNewPrBtn
-                ? `<button class="btn btn-success" onclick="closeNotification(); resetForm();">📝 New PR</button>
-                   <button class="btn" onclick="closeNotification()">Close</button>`
-                : `<button class="btn btn-accent" onclick="closeNotification(); resetMSForm();">🔎 New Market Survey</button>
-                   <button class="btn" onclick="closeNotification()">Close</button>`;
+            document.getElementById('notifBtnGroup').innerHTML = btnGroupHtml;
             document.getElementById('notificationOverlay').classList.add('visible');
         }
 
@@ -1123,6 +1304,12 @@
                     return;
                 }
 
+                if (data.status !== 'Quoted') {
+                    showMSLoadStatus(`⚠️ ${data.msNumber} is still "${data.status}" — encode its 3 supplier quotes first (Market Survey tab → Step 2) before loading it into a PR.`, 'warning');
+                    document.getElementById('msBrowseList').classList.remove('visible');
+                    return;
+                }
+
                 document.getElementById('itemContainer').innerHTML = '';
                 data.items.forEach(it => {
                     addItemRow('', it.unit || '', it.description || '', parseFloat(it.quantity) || 1, parseFloat(it.avgUnitPrice) || 0);
@@ -1141,6 +1328,11 @@
             } catch (err) {
                 showMSLoadStatus('❌ ' + err.message, 'error');
             }
+        }
+
+        function statusPillHtml(status) {
+            if (status === 'Quoted') return '<span class="status-pill quoted">Quoted</span>';
+            return '<span class="status-pill pending">Pending Quotes</span>';
         }
 
         async function toggleBrowseSurveys() {
@@ -1167,7 +1359,7 @@
                     const div = document.createElement('div');
                     div.className = 'ms-browse-item';
                     div.innerHTML = `
-                        <div class="ms-num">${s.msNumber}</div>
+                        <div class="ms-num">${s.msNumber} ${statusPillHtml(s.status)}</div>
                         <div class="ms-meta">${s.dateAccomplished || ''} · ${s.endUser || ''} — ${(s.purpose || '').substring(0, 60)}</div>
                     `;
                     div.onclick = () => fetchAndApplySurvey(s.msNumber);
@@ -1303,7 +1495,8 @@
                         'Your Purchase Request has been saved.',
                         prNumber,
                         'Total Cost: <strong>₱ ' + totalCost.toFixed(2) + '</strong>',
-                        true
+                        `<button class="btn btn-success" onclick="closeNotification(); resetForm();">📝 New PR</button>
+                         <button class="btn" onclick="closeNotification()">Close</button>`
                     );
 
                 } else {
@@ -1331,122 +1524,7 @@
         }
 
         // ============================================
-        // MARKET SURVEY: STATUS TRACKER
-        // ============================================
-        const MS_STEPS = [
-            { id: 'ms-validate', label: 'Validating form data...', icon: '🔍' },
-            { id: 'ms-prepare', label: 'Averaging supplier quotes...', icon: '📊' },
-            { id: 'ms-save', label: 'Saving to Google Sheets...', icon: '💾' },
-            { id: 'ms-verify', label: 'Verifying save operation...', icon: '✅' }
-        ];
-
-        let msStepStatus = {};
-        let msStartTime = null;
-
-        function initMSStatusTracker() {
-            const tracker = document.getElementById('msStatusTracker');
-            tracker.classList.add('visible');
-            const container = document.getElementById('msProgressSteps');
-            container.innerHTML = '';
-            msStepStatus = {};
-            msStartTime = Date.now();
-
-            MS_STEPS.forEach((step) => {
-                msStepStatus[step.id] = 'pending';
-                const div = document.createElement('div');
-                div.className = 'step';
-                div.id = 'step-' + step.id;
-                div.innerHTML = `
-                    <span class="icon pending" id="icon-${step.id}">${step.icon}</span>
-                    <span class="step-label">${step.label}</span>
-                    <span class="step-status pending" id="status-${step.id}">Pending</span>
-                    <span class="step-time" id="time-${step.id}">--</span>
-                `;
-                container.appendChild(div);
-            });
-
-            document.getElementById('msStatusBadge').textContent = 'Running...';
-            document.getElementById('msStatusBadge').className = 'badge running';
-        }
-
-        function updateMSStep(stepId, status, message) {
-            const step = MS_STEPS.find(s => s.id === stepId);
-            if (!step) return;
-
-            const el = document.getElementById('step-' + stepId);
-            const icon = document.getElementById('icon-' + stepId);
-            const statusEl = document.getElementById('status-' + stepId);
-            const timeEl = document.getElementById('time-' + stepId);
-
-            if (!el || !icon || !statusEl || !timeEl) return;
-
-            el.className = 'step';
-            icon.className = 'icon';
-
-            const elapsed = ((Date.now() - msStartTime) / 1000).toFixed(1);
-
-            switch(status) {
-                case 'active':
-                    el.classList.add('active-step');
-                    icon.classList.add('active');
-                    icon.textContent = '⏳';
-                    statusEl.textContent = message || 'Processing...';
-                    statusEl.className = 'step-status active';
-                    timeEl.textContent = elapsed + 's';
-                    break;
-                case 'done':
-                    el.classList.add('done-step');
-                    icon.classList.add('done');
-                    icon.textContent = '✅';
-                    statusEl.textContent = message || 'Done';
-                    statusEl.className = 'step-status done';
-                    timeEl.textContent = elapsed + 's';
-                    break;
-                case 'error':
-                    el.classList.add('error-step');
-                    icon.classList.add('error');
-                    icon.textContent = '❌';
-                    statusEl.textContent = message || 'Failed';
-                    statusEl.className = 'step-status error';
-                    timeEl.textContent = elapsed + 's';
-                    break;
-                default:
-                    icon.classList.add('pending');
-                    icon.textContent = step.icon;
-                    statusEl.textContent = 'Pending';
-                    statusEl.className = 'step-status pending';
-                    timeEl.textContent = '--';
-            }
-
-            msStepStatus[stepId] = status;
-        }
-
-        function setMSStepError(stepId, message) {
-            updateMSStep(stepId, 'error', message);
-            document.getElementById('msStatusBadge').textContent = 'Failed';
-            document.getElementById('msStatusBadge').className = 'badge error';
-        }
-
-        function setAllMSStepsDone() {
-            MS_STEPS.forEach(step => {
-                if (msStepStatus[step.id] !== 'error') {
-                    updateMSStep(step.id, 'done', 'Completed');
-                }
-            });
-            document.getElementById('msStatusBadge').textContent = 'Completed';
-            document.getElementById('msStatusBadge').className = 'badge done';
-        }
-
-        function showMSStatus(message, type) {
-            const statusDiv = document.getElementById('msStatusMessage');
-            statusDiv.textContent = message;
-            statusDiv.className = 'status-message ' + type;
-            statusDiv.style.display = 'block';
-            statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        // ============================================
-        // MARKET SURVEY: FORM FUNCTIONS
+        // MARKET SURVEY - STEP 1: CREATE (draft, no suppliers)
         // ============================================
         document.getElementById('msDate').value = new Date().toISOString().split('T')[0];
 
@@ -1461,129 +1539,577 @@
 
         document.getElementById('msFormNumber').value = generateMSNumber();
 
-        let msItemCount = 0;
+        let msDraftItemCount = 0;
+        let lastCreatedSurvey = null; // cached data of the last saved draft, for printing
 
-        function getMSItemRows() {
-            return document.querySelectorAll('#msItemContainer .ms-item-row');
+        function getDraftItemRows() {
+            return document.querySelectorAll('#msDraftItemContainer .ms-draft-row');
         }
 
-        function updateMSRowAverage(row) {
-            const p1 = parseFloat(row.querySelector('.ms-price1')?.value) || 0;
-            const p2 = parseFloat(row.querySelector('.ms-price2')?.value) || 0;
-            const p3 = parseFloat(row.querySelector('.ms-price3')?.value) || 0;
-            const avg = (p1 + p2 + p3) / 3;
-            row.querySelector('.avg-price').value = avg.toFixed(2);
-        }
-
-        function addMSItemRow(itemNo = '', quantity = 1, unit = '', description = '', price1 = 0, price2 = 0, price3 = 0) {
-            const container = document.getElementById('msItemContainer');
+        function addDraftItemRow(itemNo = '', quantity = 1, unit = '', description = '') {
+            const container = document.getElementById('msDraftItemContainer');
             const row = document.createElement('div');
-            row.className = 'ms-item-row';
-            row.dataset.index = msItemCount;
+            row.className = 'ms-draft-row';
+            row.dataset.index = msDraftItemCount;
 
             row.innerHTML = `
-                <input type="text" class="ms-item-no" value="${itemNo}" placeholder="1">
-                <input type="number" class="ms-quantity" value="${quantity}" min="0.01" step="0.01">
-                <input type="text" class="ms-unit" value="${unit}" placeholder="pc">
-                <input type="text" class="ms-description" value="${description}" placeholder="Item description" required>
-                <input type="number" class="ms-price1" value="${price1}" min="0" step="0.01" oninput="updateMSRowAverage(this.closest('.ms-item-row'))">
-                <input type="number" class="ms-price2" value="${price2}" min="0" step="0.01" oninput="updateMSRowAverage(this.closest('.ms-item-row'))">
-                <input type="number" class="ms-price3" value="${price3}" min="0" step="0.01" oninput="updateMSRowAverage(this.closest('.ms-item-row'))">
-                <input type="text" class="avg-price" value="0.00" readonly>
-                <button type="button" class="remove-btn" onclick="removeMSItemRow(this)">✕</button>
+                <input type="text" class="d-item-no" value="${itemNo}" placeholder="1">
+                <input type="number" class="d-quantity" value="${quantity}" min="0.01" step="0.01">
+                <input type="text" class="d-unit" value="${unit}" placeholder="pc">
+                <input type="text" class="d-description" value="${description}" placeholder="Item description" required>
+                <button type="button" class="remove-btn" onclick="removeDraftItemRow(this)">✕</button>
             `;
 
             container.appendChild(row);
-            msItemCount++;
-            updateMSRowAverage(row);
+            msDraftItemCount++;
         }
 
-        function removeMSItemRow(btn) {
-            const rows = getMSItemRows();
+        function removeDraftItemRow(btn) {
+            const rows = getDraftItemRows();
             if (rows.length > 1) {
-                btn.closest('.ms-item-row').remove();
+                btn.closest('.ms-draft-row').remove();
             } else {
                 alert('You need at least one item.');
             }
         }
 
-        function resetMSForm() {
-            if (confirm('Are you sure you want to reset the Market Survey form? All data will be lost.')) {
-                document.getElementById('msForm').reset();
-                document.getElementById('msItemContainer').innerHTML = '';
+        function resetCreateForm() {
+            if (confirm('Are you sure you want to reset this form? All data will be lost.')) {
+                document.getElementById('msCreateForm').reset();
+                document.getElementById('msDraftItemContainer').innerHTML = '';
                 document.getElementById('msFormNumber').value = generateMSNumber();
                 document.getElementById('msDate').value = new Date().toISOString().split('T')[0];
-                document.getElementById('msStatusMessage').className = 'status-message';
-                document.getElementById('msStatusMessage').style.display = 'none';
-                document.getElementById('msStatusTracker').classList.remove('visible');
-                document.getElementById('msProgressSteps').innerHTML = '';
-                addMSItemRow('1', 1, '', '', 0, 0, 0);
-                const submitBtn = document.getElementById('msSubmitBtn');
+                document.getElementById('msCreateStatusMessage').className = 'status-message';
+                document.getElementById('msCreateStatusMessage').style.display = 'none';
+                document.getElementById('msCreateStatusTracker').classList.remove('visible');
+                document.getElementById('msCreateProgressSteps').innerHTML = '';
+                addDraftItemRow('1', 1, '', '');
+                const submitBtn = document.getElementById('msCreateBtn');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '💾 Save Market Survey';
+                document.getElementById('msPrintBtn').disabled = true;
+                lastCreatedSurvey = null;
                 closeNotification();
             }
         }
 
-        async function submitMarketSurvey() {
-            document.getElementById('msStatusMessage').style.display = 'none';
-            initMSStatusTracker();
+        const MS_CREATE_STEPS = [
+            { id: 'mc-validate', label: 'Validating form data...', icon: '🔍' },
+            { id: 'mc-save', label: 'Saving to Google Sheets...', icon: '💾' },
+            { id: 'mc-verify', label: 'Verifying save operation...', icon: '✅' }
+        ];
+        let mcStepStatus = {};
+        let mcStartTime = null;
+
+        function initMCTracker() {
+            const tracker = document.getElementById('msCreateStatusTracker');
+            tracker.classList.add('visible');
+            const container = document.getElementById('msCreateProgressSteps');
+            container.innerHTML = '';
+            mcStepStatus = {};
+            mcStartTime = Date.now();
+            MS_CREATE_STEPS.forEach((step) => {
+                mcStepStatus[step.id] = 'pending';
+                const div = document.createElement('div');
+                div.className = 'step';
+                div.id = 'step-' + step.id;
+                div.innerHTML = `
+                    <span class="icon pending" id="icon-${step.id}">${step.icon}</span>
+                    <span class="step-label">${step.label}</span>
+                    <span class="step-status pending" id="status-${step.id}">Pending</span>
+                    <span class="step-time" id="time-${step.id}">--</span>`;
+                container.appendChild(div);
+            });
+            document.getElementById('msCreateStatusBadge').textContent = 'Running...';
+            document.getElementById('msCreateStatusBadge').className = 'badge running';
+        }
+
+        function updateMCStep(stepId, status, message) {
+            const step = MS_CREATE_STEPS.find(s => s.id === stepId);
+            if (!step) return;
+            const el = document.getElementById('step-' + stepId);
+            const icon = document.getElementById('icon-' + stepId);
+            const statusEl = document.getElementById('status-' + stepId);
+            const timeEl = document.getElementById('time-' + stepId);
+            if (!el || !icon || !statusEl || !timeEl) return;
+            el.className = 'step';
+            icon.className = 'icon';
+            const elapsed = ((Date.now() - mcStartTime) / 1000).toFixed(1);
+            if (status === 'active') {
+                el.classList.add('active-step'); icon.classList.add('active'); icon.textContent = '⏳';
+                statusEl.textContent = message || 'Processing...'; statusEl.className = 'step-status active'; timeEl.textContent = elapsed + 's';
+            } else if (status === 'done') {
+                el.classList.add('done-step'); icon.classList.add('done'); icon.textContent = '✅';
+                statusEl.textContent = message || 'Done'; statusEl.className = 'step-status done'; timeEl.textContent = elapsed + 's';
+            } else if (status === 'error') {
+                el.classList.add('error-step'); icon.classList.add('error'); icon.textContent = '❌';
+                statusEl.textContent = message || 'Failed'; statusEl.className = 'step-status error'; timeEl.textContent = elapsed + 's';
+            }
+            mcStepStatus[stepId] = status;
+        }
+
+        function setMCError(stepId, message) {
+            updateMCStep(stepId, 'error', message);
+            document.getElementById('msCreateStatusBadge').textContent = 'Failed';
+            document.getElementById('msCreateStatusBadge').className = 'badge error';
+        }
+
+        function setAllMCDone() {
+            MS_CREATE_STEPS.forEach(step => { if (mcStepStatus[step.id] !== 'error') updateMCStep(step.id, 'done', 'Completed'); });
+            document.getElementById('msCreateStatusBadge').textContent = 'Completed';
+            document.getElementById('msCreateStatusBadge').className = 'badge done';
+        }
+
+        function showMCStatus(message, type) {
+            const statusDiv = document.getElementById('msCreateStatusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status-message ' + type;
+            statusDiv.style.display = 'block';
+            statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        async function submitCreateSurvey() {
+            document.getElementById('msCreateStatusMessage').style.display = 'none';
+            initMCTracker();
 
             try {
-                updateMSStep('ms-validate', 'active', 'Checking required fields...');
-                await sleep(300);
+                updateMCStep('mc-validate', 'active', 'Checking required fields...');
+                await sleep(250);
 
-                const required = ['msDate', 'msEndUser', 'msPurpose', 's1Name', 's2Name', 's3Name'];
+                const required = ['msDate', 'msEndUser', 'msPurpose'];
                 for (let id of required) {
                     const field = document.getElementById(id);
                     if (!field || !field.value.trim()) {
-                        setMSStepError('ms-validate', 'Missing required field');
-                        showMSStatus('Please fill in all required fields (including all 3 supplier names).', 'error');
+                        setMCError('mc-validate', 'Missing required field');
+                        showMCStatus('Please fill in all required fields.', 'error');
                         if (field) field.focus();
                         return;
                     }
                 }
 
-                const itemRows = getMSItemRows();
+                const rows = getDraftItemRows();
                 let items = [];
                 let hasValidItem = false;
-
-                itemRows.forEach(row => {
-                    const description = row.querySelector('.ms-description')?.value?.trim() || '';
-                    const quantity = parseFloat(row.querySelector('.ms-quantity')?.value) || 0;
+                rows.forEach(row => {
+                    const description = row.querySelector('.d-description')?.value?.trim() || '';
+                    const quantity = parseFloat(row.querySelector('.d-quantity')?.value) || 0;
                     if (description && quantity > 0) {
                         hasValidItem = true;
                         items.push({
-                            itemNo: row.querySelector('.ms-item-no')?.value?.trim() || '',
+                            itemNo: row.querySelector('.d-item-no')?.value?.trim() || '',
                             quantity: quantity,
-                            unit: row.querySelector('.ms-unit')?.value?.trim() || '',
-                            description: description,
-                            price1: parseFloat(row.querySelector('.ms-price1')?.value) || 0,
-                            price2: parseFloat(row.querySelector('.ms-price2')?.value) || 0,
-                            price3: parseFloat(row.querySelector('.ms-price3')?.value) || 0
+                            unit: row.querySelector('.d-unit')?.value?.trim() || '',
+                            description: description
                         });
                     }
                 });
 
                 if (!hasValidItem) {
-                    setMSStepError('ms-validate', 'No valid items');
-                    showMSStatus('Please add at least one valid item with description and quantity.', 'error');
+                    setMCError('mc-validate', 'No valid items');
+                    showMCStatus('Please add at least one valid item with description and quantity.', 'error');
                     return;
                 }
-                updateMSStep('ms-validate', 'done', 'All required fields filled');
-
-                updateMSStep('ms-prepare', 'active', 'Averaging quotes...');
-                await sleep(300);
-                updateMSStep('ms-prepare', 'done', items.length + ' item(s) prepared');
+                updateMCStep('mc-validate', 'done', items.length + ' item(s) ready');
 
                 const msNumber = document.getElementById('msFormNumber').value;
+                const msDate = document.getElementById('msDate').value;
+                const msEndUser = document.getElementById('msEndUser').value.trim();
+                const msPurpose = document.getElementById('msPurpose').value.trim();
 
                 const formData = {
-                    action: 'submitMarketSurvey',
+                    action: 'createMarketSurvey',
                     msNumber: msNumber,
-                    dateAccomplished: document.getElementById('msDate').value,
-                    endUser: document.getElementById('msEndUser').value.trim(),
-                    purpose: document.getElementById('msPurpose').value.trim(),
+                    dateAccomplished: msDate,
+                    endUser: msEndUser,
+                    purpose: msPurpose,
+                    items: items,
+                    timestamp: new Date().toISOString()
+                };
+
+                updateMCStep('mc-save', 'active', 'Sending data...');
+                await sleep(250);
+
+                const submitBtn = document.getElementById('msCreateBtn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner"></span> Saving...';
+
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    updateMCStep('mc-save', 'done', 'Saved');
+                    updateMCStep('mc-verify', 'active', 'Verifying...');
+                    await sleep(250);
+                    updateMCStep('mc-verify', 'done', 'Verified');
+                    setAllMCDone();
+
+                    showMCStatus('✅ Market Survey created! You can now print it and hand it to your 3 suppliers.', 'success');
+
+                    lastCreatedSurvey = { msNumber, dateAccomplished: msDate, endUser: msEndUser, purpose: msPurpose, items };
+                    document.getElementById('msPrintBtn').disabled = false;
+
+                    showNotification(
+                        'Market Survey Created!',
+                        'Print it now and disseminate to your 3 suppliers.',
+                        msNumber,
+                        '',
+                        `<button class="btn btn-print" onclick="closeNotification(); printCurrentDraft();">🖨️ Print Form (3 copies)</button>
+                         <button class="btn" onclick="closeNotification()">Close</button>`
+                    );
+
+                } else {
+                    updateMCStep('mc-save', 'error', result.error || 'Save failed');
+                    setMCError('mc-save', result.error || 'Unknown error');
+                    showMCStatus('❌ Error: ' + (result.error || 'Unknown error'), 'error');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showMCStatus('❌ Error: ' + error.message, 'error');
+                const activeStep = MS_CREATE_STEPS.find(s => mcStepStatus[s.id] === 'active');
+                setMCError(activeStep ? activeStep.id : 'mc-validate', error.message);
+            }
+
+            const submitBtn = document.getElementById('msCreateBtn');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '💾 Save Market Survey';
+        }
+
+        // ============================================
+        // PRINT: Market Survey blank form (3 copies)
+        // ============================================
+        const MS_INTRO_TEXT = "In determining the technical specifications of the goods it will procure, the PMO or end-user or implementing unit must consider the objectives of the project or the procurement at hand, and identify the standards that should be met by the goods in terms of function, performance, environmental interface and/or design. It must also conduct a market survey that will include a study of the available products or services, industry developments or standards, product or service standards specified by the authorized government entity like the Bureau of Product Standards, ISO9000 or similar local or international bodies. As a rule, Philippine standards, as specified by the Bureau of Product Standards, must be followed. For products where there are no specified Philippine standards, the standards of the country of origin or other international body may be considered. Product brochures, technical publications, industry newsletters, the industry itself, as well as the Internet, are good sources of product information. The conduct of a comparative study of the options available in the market and their relevance to the requirements of the Project is highly recommended. As such, please quote your best offer for the item/s listed below to determine the availability of the goods and cost or market price of the product to come up with a \"fair criteria\".";
+
+        function buildPrintCopyHtml(msData, copyIndex, totalCopies) {
+            let rows = '';
+            msData.items.forEach(it => {
+                rows += `<tr>
+                    <td style="text-align:center;">${escapeHtml(it.itemNo)}</td>
+                    <td style="text-align:center;">${escapeHtml(it.quantity)}</td>
+                    <td style="text-align:center;">${escapeHtml(it.unit)}</td>
+                    <td>${escapeHtml(it.description)}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>`;
+            });
+
+            return `
+                <div class="print-copy">
+                    <div class="print-copy-label">Supplier copy ${copyIndex} of ${totalCopies}</div>
+                    <div class="print-title">MARKET SURVEY</div>
+                    <div class="print-meta"><strong>MS No.:</strong> ${escapeHtml(msData.msNumber)}</div>
+                    <div class="print-meta" style="margin-bottom:10px;">Sir/Madam:</div>
+                    <div class="print-intro">${escapeHtml(MS_INTRO_TEXT)}</div>
+                    <div class="print-meta"><strong>End-User/Focal Person:</strong> ${escapeHtml(msData.endUser)}</div>
+                    <div class="print-meta"><strong>Purpose:</strong> ${escapeHtml(msData.purpose)}</div>
+
+                    <table class="print-table">
+                        <thead>
+                            <tr>
+                                <th>Item No.</th>
+                                <th>Quantity</th>
+                                <th>Unit</th>
+                                <th>Item Description</th>
+                                <th>Offer</th>
+                                <th>Unit Price</th>
+                                <th>Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows}
+                            <tr>
+                                <td colspan="4" style="border:none;"></td>
+                                <td style="text-align:center; font-weight:bold;">12% VAT</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="print-footer">
+                        <div class="sig-line"></div>
+                        <div style="text-align:center; font-size:11px; margin-bottom:14px;">PRINTED NAME/SIGNATURE OF AUTHORIZED REPRESENTATIVE</div>
+
+                        <div class="field-row"><label>Designation:</label><div class="fill-line"></div></div>
+                        <div class="field-row"><label>Company Name:</label><div class="fill-line"></div></div>
+                        <div class="field-row"><label>Business Address:</label><div class="fill-line"></div></div>
+                        <div class="field-row"><label>PhilGEPS Registration No.:</label><div class="fill-line"></div></div>
+                        <div class="field-row"><label>Telephone Number:</label><div class="fill-line"></div></div>
+                        <div class="field-row"><label>Email Address:</label><div class="fill-line"></div></div>
+                        <div class="field-row"><label>TIN:</label><div class="fill-line"></div></div>
+                        <div class="field-row"><label>Date Accomplished:</label><div class="fill-line"></div></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function printMarketSurveyForm(msData) {
+            const printArea = document.getElementById('printArea');
+            let html = '';
+            for (let i = 1; i <= 3; i++) {
+                html += buildPrintCopyHtml(msData, i, 3);
+            }
+            printArea.innerHTML = html;
+            window.print();
+        }
+
+        function printCurrentDraft() {
+            if (!lastCreatedSurvey) {
+                alert('Save the Market Survey first, then print.');
+                return;
+            }
+            printMarketSurveyForm(lastCreatedSurvey);
+        }
+
+        // ============================================
+        // MARKET SURVEY - STEP 2: ENCODE SUPPLIER QUOTES
+        // ============================================
+        let currentEncodeSurvey = null;
+
+        function showEncodeLoadStatus(message, type) {
+            const el = document.getElementById('encodeLoadStatus');
+            el.textContent = message;
+            el.className = 'ms-load-status ' + (type || '');
+        }
+
+        async function loadDraftForEncode() {
+            const msNumber = document.getElementById('encodeSearchInput').value.trim();
+            if (!msNumber) {
+                showEncodeLoadStatus('Enter a Market Survey number first.', 'error');
+                return;
+            }
+            await fetchAndApplyForEncode(msNumber);
+        }
+
+        async function fetchAndApplyForEncode(msNumber) {
+            showEncodeLoadStatus('Searching for ' + msNumber + ' ...', '');
+            try {
+                const res = await fetch(SCRIPT_URL + '?action=getSurvey&msNumber=' + encodeURIComponent(msNumber));
+                const data = await res.json();
+
+                if (!data.success) {
+                    showEncodeLoadStatus('❌ ' + (data.error || 'Market Survey not found'), 'error');
+                    document.querySelector('#msEncodeForm').style.display = 'none';
+                    document.getElementById('encodeHeaderSummary').classList.remove('visible');
+                    return;
+                }
+
+                currentEncodeSurvey = data;
+
+                const summary = document.getElementById('encodeHeaderSummary');
+                summary.innerHTML = `
+                    <strong>${escapeHtml(data.msNumber)}</strong> ${statusPillHtml(data.status)}<br>
+                    ${escapeHtml(data.dateAccomplished)} · ${escapeHtml(data.endUser)}<br>
+                    ${escapeHtml(data.purpose)}
+                `;
+                summary.classList.add('visible');
+
+                // populate item rows (readonly desc/qty/unit) with existing prices (0 if not yet quoted)
+                const container = document.getElementById('msEncodeItemContainer');
+                container.innerHTML = '';
+                data.items.forEach(it => {
+                    const row = document.createElement('div');
+                    row.className = 'ms-item-row';
+                    row.innerHTML = `
+                        <input type="text" class="e-item-no" value="${escapeHtml(it.itemNo)}" readonly style="background:#e9ecef;">
+                        <input type="text" class="e-quantity" value="${escapeHtml(it.quantity)}" readonly style="background:#e9ecef;">
+                        <input type="text" class="e-unit" value="${escapeHtml(it.unit)}" readonly style="background:#e9ecef;">
+                        <input type="text" class="e-description" value="${escapeHtml(it.description)}" readonly style="background:#e9ecef;">
+                        <input type="number" class="e-price1" value="${it.price1 || 0}" min="0" step="0.01" oninput="updateEncodeRowAverage(this.closest('.ms-item-row'))">
+                        <input type="number" class="e-price2" value="${it.price2 || 0}" min="0" step="0.01" oninput="updateEncodeRowAverage(this.closest('.ms-item-row'))">
+                        <input type="number" class="e-price3" value="${it.price3 || 0}" min="0" step="0.01" oninput="updateEncodeRowAverage(this.closest('.ms-item-row'))">
+                        <input type="text" class="avg-price" value="${(parseFloat(it.avgUnitPrice) || 0).toFixed(2)}" readonly>
+                    `;
+                    container.appendChild(row);
+                });
+
+                // pre-fill supplier blocks if already quoted before (editable, in case of correction)
+                const suppliers = data.suppliers || [{}, {}, {}];
+                ['1', '2', '3'].forEach((n, idx) => {
+                    const s = suppliers[idx] || {};
+                    document.getElementById('s' + n + 'Name').value = s.name || '';
+                    document.getElementById('s' + n + 'Address').value = s.address || '';
+                    document.getElementById('s' + n + 'Philgeps').value = s.philgeps || '';
+                    document.getElementById('s' + n + 'Tin').value = s.tin || '';
+                    document.getElementById('s' + n + 'Contact').value = s.contact || '';
+                    document.getElementById('s' + n + 'Email').value = s.email || '';
+                    document.getElementById('s' + n + 'Signatory').value = s.signatory || '';
+                    document.getElementById('s' + n + 'Designation').value = s.designation || '';
+                });
+
+                document.getElementById('msEncodeForm').style.display = 'block';
+                showEncodeLoadStatus(`✅ Loaded ${data.items.length} item(s) from ${data.msNumber}. Enter the 3 suppliers' quoted prices below.`, 'success');
+                document.getElementById('encodeBrowseList').classList.remove('visible');
+                document.getElementById('encodeSearchInput').value = data.msNumber;
+
+            } catch (err) {
+                showEncodeLoadStatus('❌ ' + err.message, 'error');
+            }
+        }
+
+        function updateEncodeRowAverage(row) {
+            const p1 = parseFloat(row.querySelector('.e-price1')?.value) || 0;
+            const p2 = parseFloat(row.querySelector('.e-price2')?.value) || 0;
+            const p3 = parseFloat(row.querySelector('.e-price3')?.value) || 0;
+            const avg = (p1 + p2 + p3) / 3;
+            row.querySelector('.avg-price').value = avg.toFixed(2);
+        }
+
+        async function toggleBrowseSurveysEncode() {
+            const list = document.getElementById('encodeBrowseList');
+            if (list.classList.contains('visible')) {
+                list.classList.remove('visible');
+                return;
+            }
+
+            list.innerHTML = '<div class="ms-browse-item">Loading recent surveys...</div>';
+            list.classList.add('visible');
+
+            try {
+                const res = await fetch(SCRIPT_URL + '?action=listSurveys');
+                const data = await res.json();
+
+                if (!data.success || !data.surveys || data.surveys.length === 0) {
+                    list.innerHTML = '<div class="ms-browse-item">No Market Surveys saved yet.</div>';
+                    return;
+                }
+
+                list.innerHTML = '';
+                data.surveys.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = 'ms-browse-item';
+                    div.innerHTML = `
+                        <div class="ms-num">${s.msNumber} ${statusPillHtml(s.status)}</div>
+                        <div class="ms-meta">${s.dateAccomplished || ''} · ${s.endUser || ''} — ${(s.purpose || '').substring(0, 60)}</div>
+                    `;
+                    div.onclick = () => fetchAndApplyForEncode(s.msNumber);
+                    list.appendChild(div);
+                });
+            } catch (err) {
+                list.innerHTML = '<div class="ms-browse-item">❌ ' + err.message + '</div>';
+            }
+        }
+
+        const MS_ENCODE_STEPS = [
+            { id: 'me-validate', label: 'Validating quotes...', icon: '🔍' },
+            { id: 'me-save', label: 'Saving to Google Sheets...', icon: '💾' },
+            { id: 'me-verify', label: 'Verifying save operation...', icon: '✅' }
+        ];
+        let meStepStatus = {};
+        let meStartTime = null;
+
+        function initMETracker() {
+            const tracker = document.getElementById('msEncodeStatusTracker');
+            tracker.classList.add('visible');
+            const container = document.getElementById('msEncodeProgressSteps');
+            container.innerHTML = '';
+            meStepStatus = {};
+            meStartTime = Date.now();
+            MS_ENCODE_STEPS.forEach((step) => {
+                meStepStatus[step.id] = 'pending';
+                const div = document.createElement('div');
+                div.className = 'step';
+                div.id = 'step-' + step.id;
+                div.innerHTML = `
+                    <span class="icon pending" id="icon-${step.id}">${step.icon}</span>
+                    <span class="step-label">${step.label}</span>
+                    <span class="step-status pending" id="status-${step.id}">Pending</span>
+                    <span class="step-time" id="time-${step.id}">--</span>`;
+                container.appendChild(div);
+            });
+            document.getElementById('msEncodeStatusBadge').textContent = 'Running...';
+            document.getElementById('msEncodeStatusBadge').className = 'badge running';
+        }
+
+        function updateMEStep(stepId, status, message) {
+            const step = MS_ENCODE_STEPS.find(s => s.id === stepId);
+            if (!step) return;
+            const el = document.getElementById('step-' + stepId);
+            const icon = document.getElementById('icon-' + stepId);
+            const statusEl = document.getElementById('status-' + stepId);
+            const timeEl = document.getElementById('time-' + stepId);
+            if (!el || !icon || !statusEl || !timeEl) return;
+            el.className = 'step';
+            icon.className = 'icon';
+            const elapsed = ((Date.now() - meStartTime) / 1000).toFixed(1);
+            if (status === 'active') {
+                el.classList.add('active-step'); icon.classList.add('active'); icon.textContent = '⏳';
+                statusEl.textContent = message || 'Processing...'; statusEl.className = 'step-status active'; timeEl.textContent = elapsed + 's';
+            } else if (status === 'done') {
+                el.classList.add('done-step'); icon.classList.add('done'); icon.textContent = '✅';
+                statusEl.textContent = message || 'Done'; statusEl.className = 'step-status done'; timeEl.textContent = elapsed + 's';
+            } else if (status === 'error') {
+                el.classList.add('error-step'); icon.classList.add('error'); icon.textContent = '❌';
+                statusEl.textContent = message || 'Failed'; statusEl.className = 'step-status error'; timeEl.textContent = elapsed + 's';
+            }
+            meStepStatus[stepId] = status;
+        }
+
+        function setMEError(stepId, message) {
+            updateMEStep(stepId, 'error', message);
+            document.getElementById('msEncodeStatusBadge').textContent = 'Failed';
+            document.getElementById('msEncodeStatusBadge').className = 'badge error';
+        }
+
+        function setAllMEDone() {
+            MS_ENCODE_STEPS.forEach(step => { if (meStepStatus[step.id] !== 'error') updateMEStep(step.id, 'done', 'Completed'); });
+            document.getElementById('msEncodeStatusBadge').textContent = 'Completed';
+            document.getElementById('msEncodeStatusBadge').className = 'badge done';
+        }
+
+        function showMEStatus(message, type) {
+            const statusDiv = document.getElementById('msEncodeStatusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status-message ' + type;
+            statusDiv.style.display = 'block';
+            statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        async function submitEncodeQuotes() {
+            if (!currentEncodeSurvey) {
+                alert('Load a Market Survey first.');
+                return;
+            }
+
+            document.getElementById('msEncodeStatusMessage').style.display = 'none';
+            initMETracker();
+
+            try {
+                updateMEStep('me-validate', 'active', 'Checking supplier names...');
+                await sleep(250);
+
+                const required = ['s1Name', 's2Name', 's3Name'];
+                for (let id of required) {
+                    const field = document.getElementById(id);
+                    if (!field || !field.value.trim()) {
+                        setMEError('me-validate', 'Missing supplier name');
+                        showMEStatus('Please fill in all 3 supplier company names.', 'error');
+                        if (field) field.focus();
+                        return;
+                    }
+                }
+
+                const itemRows = document.querySelectorAll('#msEncodeItemContainer .ms-item-row');
+                let items = [];
+                itemRows.forEach(row => {
+                    items.push({
+                        itemNo: row.querySelector('.e-item-no')?.value?.trim() || '',
+                        price1: parseFloat(row.querySelector('.e-price1')?.value) || 0,
+                        price2: parseFloat(row.querySelector('.e-price2')?.value) || 0,
+                        price3: parseFloat(row.querySelector('.e-price3')?.value) || 0
+                    });
+                });
+
+                updateMEStep('me-validate', 'done', items.length + ' item(s) ready');
+
+                const formData = {
+                    action: 'encodeMarketSurveyQuotes',
+                    msNumber: currentEncodeSurvey.msNumber,
                     items: items,
                     suppliers: [
                         {
@@ -1616,14 +2142,13 @@
                             signatory: document.getElementById('s3Signatory').value.trim(),
                             designation: document.getElementById('s3Designation').value.trim()
                         }
-                    ],
-                    timestamp: new Date().toISOString()
+                    ]
                 };
 
-                updateMSStep('ms-save', 'active', 'Sending data...');
-                await sleep(300);
+                updateMEStep('me-save', 'active', 'Sending data...');
+                await sleep(250);
 
-                const submitBtn = document.getElementById('msSubmitBtn');
+                const submitBtn = document.getElementById('msEncodeBtn');
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span class="spinner"></span> Saving...';
 
@@ -1632,44 +2157,42 @@
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(formData)
                 });
-
                 const result = await response.json();
 
                 if (result.success) {
-                    updateMSStep('ms-save', 'done', 'Saved');
-                    updateMSStep('ms-verify', 'active', 'Verifying...');
-                    await sleep(300);
-                    updateMSStep('ms-verify', 'done', 'Verified');
-                    setAllMSStepsDone();
+                    updateMEStep('me-save', 'done', 'Saved');
+                    updateMEStep('me-verify', 'active', 'Verifying...');
+                    await sleep(250);
+                    updateMEStep('me-verify', 'done', 'Verified');
+                    setAllMEDone();
 
-                    showMSStatus('✅ Market Survey successfully saved!', 'success');
+                    showMEStatus('✅ Supplier quotes saved! This Market Survey is now marked "Quoted" and ready to use in a Purchase Request.', 'success');
+
                     showNotification(
-                        'Market Survey Saved!',
-                        'Use its number to auto-fill items in a Purchase Request.',
-                        msNumber,
+                        'Quotes Saved!',
+                        'This survey is now ready to load into a Purchase Request.',
+                        currentEncodeSurvey.msNumber,
                         '',
-                        false
+                        `<button class="btn" onclick="closeNotification(); switchTab('pr');">🧾 Go to Purchase Request</button>
+                         <button class="btn" onclick="closeNotification()">Close</button>`
                     );
+
                 } else {
-                    updateMSStep('ms-save', 'error', result.error || 'Save failed');
-                    setMSStepError('ms-save', result.error || 'Unknown error');
-                    showMSStatus('❌ Error: ' + (result.error || 'Unknown error'), 'error');
+                    updateMEStep('me-save', 'error', result.error || 'Save failed');
+                    setMEError('me-save', result.error || 'Unknown error');
+                    showMEStatus('❌ Error: ' + (result.error || 'Unknown error'), 'error');
                 }
 
             } catch (error) {
                 console.error('Error:', error);
-                showMSStatus('❌ Error: ' + error.message, 'error');
-                const activeStep = MS_STEPS.find(s => msStepStatus[s.id] === 'active');
-                if (activeStep) {
-                    setMSStepError(activeStep.id, error.message);
-                } else {
-                    setMSStepError('ms-validate', error.message);
-                }
+                showMEStatus('❌ Error: ' + error.message, 'error');
+                const activeStep = MS_ENCODE_STEPS.find(s => meStepStatus[s.id] === 'active');
+                setMEError(activeStep ? activeStep.id : 'me-validate', error.message);
             }
 
-            const submitBtn = document.getElementById('msSubmitBtn');
+            const submitBtn = document.getElementById('msEncodeBtn');
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '💾 Save Market Survey';
+            submitBtn.innerHTML = '💾 Save Supplier Quotes';
         }
 
         // ============================================
@@ -1677,7 +2200,7 @@
         // ============================================
         addItemRow('', '', '', 1, 0);
         addItemRow('', '', '', 1, 0);
-        addMSItemRow('1', 1, '', '', 0, 0, 0);
+        addDraftItemRow('1', 1, '', '');
 
         document.getElementById('notificationOverlay').addEventListener('click', function(e) {
             if (e.target === this) closeNotification();
